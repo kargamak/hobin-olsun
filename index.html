@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hobin Olsun - Akıllı Hobi Öneri ve Karar Destek Sistemi</title>
+  <meta name="description" content="Karar felcini aşın, gizli maliyetleri önceden görün ve yaşam tarzınıza en uygun 3 nokta atışı hobiyi anında keşfedin.">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <!-- Header / Navbar matching wireframe aesthetic -->
+  <header class="app-header" id="app-header">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <a href="#" class="brand-logo" id="brand-logo">
+          <span class="brand-script">Hobin</span>
+          <span class="brand-script sub">Olsun</span>
+        </a>
+      </div>
+
+      <nav class="nav-actions">
+        <button class="nav-link-btn" id="btn-show-all-hobbies">Hobi Kataloğu</button>
+        <button class="nav-link-btn" id="btn-methodology">Nasıl Çalışır?</button>
+        <button class="cta-pill-small" id="nav-wizard-btn">Hobi Bul ✨</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Hero / Call to action section matching wireframe -->
+    <section class="hero-section">
+      <div class="hero-glow-blob blob-left"></div>
+      <div class="hero-glow-blob blob-right"></div>
+      
+      <div class="hero-container">
+        <div class="hero-badge">Karar Felcini Bitir • Gizli Maliyetleri Gör</div>
+        <h1 class="hero-title">Sana En Çok Uyan Yeni Tutkunu Keşfet</h1>
+        <p class="hero-subtitle">
+          Bütçenize, haftalık vaktinize ve yaşam alanınıza göre ağırlıklı puanlanan nokta atışı hobi önerileri ve ilk 15 dakikalık başlangıç rehberi.
+        </p>
+
+        <!-- Big rounded wireframe pill CTA button -->
+        <div class="hero-cta-wrapper">
+          <button class="hero-cta-button" id="open-wizard-btn" aria-label="Hobi bulma sihirbazını başlat">
+            <span class="cta-sparkle">✨</span>
+            <span class="cta-text">Tıkla ve sana en uygun hobileri bul!</span>
+            <span class="cta-arrow">→</span>
+          </button>
+          <div class="cta-subnote">Sadece 1 dakikalık 7 soru • 100% Kişiselleştirilmiş Öneri</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Recommendations Banner (Visible after quiz) -->
+    <section class="recommendations-section hidden" id="recommendations-section">
+      <div class="section-container">
+        <div class="recommendations-header">
+          <div class="badge-accent">🎯 Eşleştirme Sonuçları</div>
+          <h2 id="rec-heading-title">Senin İçin %75+ Uyum Sağlayan Hobiler</h2>
+          <p id="recommendation-summary-text">Belirttiğiniz kriterlere göre %75 ve üzeri uyum sağlayan hobiler listelenmiştir. Kategorilere göre filtreleyebilirsiniz.</p>
+
+          <!-- Interactive Match Percentage Range Slider -->
+          <div class="threshold-slider-container">
+            <div class="slider-label-row">
+              <span class="slider-title">🎯 Minimum Uyum Eşiği:</span>
+              <span class="slider-val-badge" id="slider-val-display">%75 ve Üzeri</span>
+            </div>
+            <div class="slider-input-wrapper">
+              <span class="slider-edge-label">%40</span>
+              <input type="range" id="match-threshold-slider" min="40" max="95" step="5" value="75" aria-label="Uyum eşiği seçici">
+              <span class="slider-edge-label">%95</span>
+            </div>
+            <div class="slider-ticks">
+              <span>Geniş Liste (%40)</span>
+              <span class="active-tick-hint">İdeal Denge (Varsayılan %75)</span>
+              <span>Nokta Atışı (%90+)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category filter pills for Recommendations -->
+        <div class="filter-pills-bar" id="rec-category-filter-bar" style="justify-content: center; margin-bottom: 28px;">
+          <!-- Dynamically populated -->
+        </div>
+
+        <div class="top-matches-grid" id="top-matches-grid">
+          <!-- Dynamically populated top 20 cards -->
+        </div>
+
+        <div class="recommendations-actions">
+          <button class="secondary-btn" id="btn-recalculate">🔄 Kriterleri Değiştir</button>
+          <a href="#catalog-section" class="text-link-btn">Tüm Kataloğu İncele (147 hobi) ↓</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hobby Catalog Section (Wireframe 6-card row & more) -->
+    <section class="catalog-section" id="catalog-section">
+      <div class="section-container">
+        <div class="catalog-top-bar">
+          <div class="catalog-heading-group">
+            <h2 class="catalog-title">Keşfedilmeyi Bekleyen Hobiler</h2>
+            <p class="catalog-desc">Her biri için gerçek başlangıç maliyetleri, ilk eylem planı ve bırakma riskleri analiz edildi.</p>
+          </div>
+
+          <!-- Category filter pills -->
+          <div class="filter-pills-bar" id="category-filter-bar">
+            <button class="filter-pill active" data-category="all">Tümü (10)</button>
+            <button class="filter-pill" data-category="craft_making">🎨 El Sanatları</button>
+            <button class="filter-pill" data-category="mental_focus">🧠 Zihinsel Odak</button>
+            <button class="filter-pill" data-category="physical_movement">🧗 Fiziksel Hareket</button>
+            <button class="filter-pill" data-category="digital_creative">💻 Dijital & Maker</button>
+            <button class="filter-pill" data-category="collecting_curation">☕ Kürasyon & Sanat</button>
+          </div>
+        </div>
+
+        <!-- Quick filter indicators -->
+        <div class="quick-filters-row">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="hobby-search-input" placeholder="Hobi adı, malzeme veya etiket ara (örn: kil, sabır, tablet)..." />
+          </div>
+          <div class="filter-select-group">
+            <select id="budget-filter-select" aria-label="Bütçe filtresi">
+              <option value="all">Tüm Bütçeler</option>
+              <option value="free">Ücretsiz (0 TL)</option>
+              <option value="low">Düşük (0 - 800 TL)</option>
+              <option value="medium">Orta (800 - 2000 TL)</option>
+            </select>
+            <select id="location-filter-select" aria-label="Mekan filtresi">
+              <option value="all">Tüm Mekanlar</option>
+              <option value="indoor_desk">Masa Başı</option>
+              <option value="indoor_room">Ev / Oda</option>
+              <option value="outdoor">Açık Hava</option>
+              <option value="specialized_venue">Özel Salon / Mekan</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- The Wireframe Grid of Cards -->
+        <div class="hobby-grid" id="hobby-grid">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Hobin Section -->
+    <section class="features-section" id="features-section">
+      <div class="section-container">
+        <div class="features-grid">
+          <div class="feature-box">
+            <div class="feature-icon">🛡️</div>
+            <h3>Gizli Maliyet Yanılgısına Son</h3>
+            <p>Başlangıçta ucuz sanılan fakat sonradan fırın, özel sarf malzemesi veya ekipman gerektiren hobileri net fiyat dökümüyle gösteririz.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-icon">⚡</div>
+            <h3>İlk 15 Dakika Eylem Planı</h3>
+            <p>Kararsızlığı kırmak için her hobiye hemen bugün başlayabileceğiniz, net tanımlanmış ilk mikro aksiyon adımı ekledik.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-icon">⚠️</div>
+            <h3>Bırakma Riskleri (Friction) Analizi</h3>
+            <p>İnsanların o hobiyi neden yarım bıraktığını (gürültü, toz, yer kaplama vb.) baştan bilerek hazırlıklı başlayın.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Interactive Questionnaire / Decision Wizard Modal -->
+  <div class="modal-overlay hidden" id="wizard-modal" role="dialog" aria-modal="true">
+    <div class="modal-window wizard-card">
+      <div class="wizard-header">
+        <div class="wizard-step-info">
+          <span class="wizard-step-badge" id="wizard-step-label">Adım 1 / 6</span>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="wizard-progress-bar" style="width: 16.6%;"></div>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="close-wizard-btn" aria-label="Kapat">✕</button>
+      </div>
+
+      <div class="wizard-body" id="wizard-step-content">
+        <!-- Step questions injected by JavaScript -->
+      </div>
+
+      <div class="wizard-footer">
+        <button class="secondary-btn" id="wizard-prev-btn" disabled>← Geri</button>
+        <button class="primary-btn" id="wizard-next-btn">Devam Et →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Hobby View Modal (Starter Kit, Friction Points, First Action) -->
+  <div class="modal-overlay hidden" id="detail-modal" role="dialog" aria-modal="true">
+    <div class="modal-window detail-card">
+      <button class="modal-close-btn detail-close-floating" id="close-detail-btn" aria-label="Kapat">✕</button>
+      
+      <div class="detail-hero-banner" id="detail-hero-banner">
+        <div class="detail-hero-overlay">
+          <span class="detail-category-badge" id="modal-category-badge">Kategori</span>
+          <h2 class="detail-title" id="modal-title">Hobi Başlığı</h2>
+          <p class="detail-tagline" id="modal-tagline">Kısa açıklama</p>
+        </div>
+      </div>
+
+      <div class="detail-body-scrollable">
+        <!-- Quick stats ribbon -->
+        <div class="detail-metrics-ribbon">
+          <div class="metric-item">
+            <span class="metric-label">Haftalık Süre</span>
+            <span class="metric-val" id="modal-time-val">3 saat</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Başlangıç Maliyeti</span>
+            <span class="metric-val" id="modal-budget-val">1200 TL</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">İlk Başarı Hızı</span>
+            <span class="metric-val" id="modal-win-val">1. Günde</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Çalışma Alanı</span>
+            <span class="metric-val" id="modal-env-val">Masa Başı</span>
+          </div>
+        </div>
+
+        <!-- Section 1: First Action Plan (Micro-step) -->
+        <div class="detail-section highlight-box">
+          <div class="section-title-row">
+            <span class="section-icon">🚀</span>
+            <h3>İlk Somut Eylem Planı (İlk 15-30 Dakika)</h3>
+          </div>
+          <p class="section-desc">Karar felcini kırmanın yolu hemen ufak bir adım atmaktır. İşte başlangıç adımı:</p>
+          <div class="first-action-card">
+            <div class="action-time-badge" id="modal-first-action-time">⏱️ 20 Dakika</div>
+            <p class="action-instruction" id="modal-first-action-desc">Açıklama</p>
+          </div>
+        </div>
+
+        <!-- Section 2: Starter Kit & Cost Breakdown -->
+        <div class="detail-section">
+          <div class="section-title-row">
+            <span class="section-icon">🧰</span>
+            <h3>Başlangıç Kiti & Şeffaf Maliyet Dökümü</h3>
+          </div>
+          <p class="section-desc">Piyasadaki ortalama fiyatlar baz alınarak zorunlu ve opsiyonel malzemeler ayrıştırılmıştır:</p>
+          <div class="starter-kit-list" id="modal-starter-kit-list">
+            <!-- Kit items injected here -->
+          </div>
+          <div class="kit-total-summary">
+            <span>Minimum Zorunlu Başlangıç:</span>
+            <strong id="modal-starter-total">0 TL</strong>
+          </div>
+        </div>
+
+        <!-- Section 3: Friction Points & Bottlenecks -->
+        <div class="detail-section">
+          <div class="section-title-row">
+            <span class="section-icon">⚠️</span>
+            <h3>Bırakma Riskleri & Sürtünme Noktaları (Friction Analysis)</h3>
+          </div>
+          <p class="section-desc">Bu hobiye başlayanların en çok zorlandığı ve süreci yarım bırakma ihtimali olan kritik etmenler:</p>
+          <ul class="friction-points-list" id="modal-friction-list">
+            <!-- Friction points injected here -->
+          </ul>
+        </div>
+      </div>
+
+      <div class="detail-footer">
+        <button class="secondary-btn" id="btn-share-hobby">📋 Planı Kopyala</button>
+        <button class="primary-btn" id="btn-close-detail-cta">Anladım, Harika! 🎯</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Methodology Modal -->
+  <div class="modal-overlay hidden" id="methodology-modal" role="dialog" aria-modal="true">
+    <div class="modal-window method-card">
+      <div class="wizard-header">
+        <h3>Hobin Karar Destek Mimarisi Nasıl Çalışır?</h3>
+        <button class="modal-close-btn" id="close-methodology-btn" aria-label="Kapat">✕</button>
+      </div>
+      <div class="wizard-body">
+        <p>Hobin sistemi, kullanıcıların yeni bir uğraş ararken karşılaştıkları <strong>Karar Felci</strong>, <strong>Gizli Maliyet Yanılgısı</strong> ve <strong>Zaman-Ödül Uyuşmazlığı</strong> problemlerini çözmek için geliştirilmiş hibrit bir karar destek motorudur.</p>
+        
+        <div class="method-steps">
+          <div class="method-step">
+            <span class="m-num">1</span>
+            <div>
+              <strong>Kriter Ağırlıklandırması:</strong> Bütçe (%30), Zaman & Hazırlık Yükü (%25), Yaşam Alanı & Mekân (%20), Hızlı Ödül Eşiği (%15) ve Gürültü Toleransı (%10) matrisi üzerinden puanlama yapılır.
+            </div>
+          </div>
+          <div class="method-step">
+            <span class="m-num">2</span>
+            <div>
+              <strong>HobbyEntity Taksonomisi:</strong> Her hobi PRD şemasına uygun olarak hazırlık süresi, temizlik yükü, sürtünme noktaları ve başlangıç kitiyle modellenmiştir.
+            </div>
+          </div>
+          <div class="method-step">
+            <span class="m-num">3</span>
+            <div>
+              <strong>İlk Adım İtici Gücü:</strong> Kullanıcının hevesini kaybetmemesi için her öneriye ilk 15-30 dakikada tamamlanabilecek mikro bir eylem atanır.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wizard-footer">
+        <button class="primary-btn" id="btn-close-methodology">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <div class="section-container footer-content">
+      <div class="footer-brand">
+        <span class="brand-script footer-logo">Hobin Olsun</span>
+        <p>Kişiselleştirilmiş Hobi ve Yaşam Tarzı Karar Destek Platformu</p>
+      </div>
+      <div class="footer-links">
+        <span>© 2026 Hobin Olsun • Tüm hakları saklıdır.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
