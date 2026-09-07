@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1b4749"/>
+      <stop offset="100%" stop-color="#2d6a6d"/>
+    </linearGradient>
+    <linearGradient id="sparkleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f29e74"/>
+      <stop offset="100%" stop-color="#e07a5f"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0e2829" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded Squircle Base -->
+  <rect x="8" y="8" width="112" height="112" rx="30" ry="30" fill="url(#bgGrad)" filter="url(#shadow)"/>
+  <rect x="9.5" y="9.5" width="109" height="109" rx="28.5" ry="28.5" fill="none" stroke="rgba(255, 255, 255, 0.25)" stroke-width="2"/>
+
+  <!-- "ho" Monogram Text -->
+  <text x="56" y="83" 
+        text-anchor="middle" 
+        font-family="'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+        font-size="62" 
+        font-weight="900" 
+        letter-spacing="-4"
+        fill="#ffffff">ho</text>
+
+  <!-- Sparkle Accent in top right -->
+  <path d="M96 24 Q97 34 107 35 Q97 36 96 46 Q95 36 85 35 Q95 34 96 24 Z" fill="url(#sparkleGrad)"/>
+  <circle cx="108" cy="22" r="2.5" fill="#f29e74"/>
+</svg>
