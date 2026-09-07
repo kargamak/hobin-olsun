@@ -1,6 +1,38 @@
 import { HOBBIES } from './data/hobbies.js';
 import { calculateHobbyScores } from './scoringEngine.js';
 
+// ============================================================================
+// CLIENT-SIDE LOCAL STORAGE (HER CİHAZ İÇİN TAMAMEN BAĞIMSIZ & ÖZEL)
+// ============================================================================
+const STORAGE_KEYS = {
+  ANSWERS: 'hobin_user_answers',
+  QUIZ_STATE: 'hobin_quiz_state',
+  FILTERS: 'hobin_catalog_filters',
+  FAVORITES: 'hobin_favorite_hobbies',
+  SCREENTIME: 'hobin_screentime_hours'
+};
+
+function getStorage(key, fallback = null) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function setStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {}
+}
+
+function removeStorage(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch (e) {}
+}
+
 // State
 let currentStep = 0;
 const userAnswers = {
@@ -12,6 +44,15 @@ const userAnswers = {
   noiseTolerance: 'silent',
   firstWinSpeed: 'immediate'
 };
+
+// Cihazda önceden kaydedilmiş cevaplar varsa yükle
+const savedAnswers = getStorage(STORAGE_KEYS.ANSWERS);
+if (savedAnswers && typeof savedAnswers === 'object') {
+  Object.assign(userAnswers, savedAnswers);
+}
+
+// Cihaza özel kaydedilen favori hobiler
+let favoriteHobbyIds = new Set(getStorage(STORAGE_KEYS.FAVORITES, []));
 
 let currentFilteredCategory = 'all';
 let activeSearchQuery = '';
@@ -191,6 +232,7 @@ function renderWizardStep() {
       optionElements.forEach(o => o.classList.remove('selected'));
       el.classList.add('selected');
       userAnswers[step.key] = el.getAttribute('data-value');
+      setStorage(STORAGE_KEYS.ANSWERS, userAnswers);
     });
   });
 }
@@ -201,7 +243,7 @@ function handleWizardNext() {
     renderWizardStep();
   } else {
     closeWizard();
-    finishWizardAndShowResults();
+    finishWizardAndShowResults(false);
   }
 }
 
@@ -212,16 +254,35 @@ function handleWizardPrev() {
   }
 }
 
-function finishWizardAndShowResults() {
+function finishWizardAndShowResults(isSilentRestore = false) {
   allScoredHobbies = calculateHobbyScores(HOBBIES, userAnswers);
-  currentThresholdPercent = 75;
-  if (matchThresholdSlider) {
-    matchThresholdSlider.value = 75;
+
+  const savedQuiz = getStorage(STORAGE_KEYS.QUIZ_STATE, {});
+  if (isSilentRestore && savedQuiz.threshold) {
+    currentThresholdPercent = Number(savedQuiz.threshold) || 75;
+    recActiveCategory = savedQuiz.recActiveCategory || 'all';
+  } else if (!isSilentRestore) {
+    currentThresholdPercent = 75;
+    recActiveCategory = 'all';
   }
-  recActiveCategory = 'all';
+
+  if (matchThresholdSlider) {
+    matchThresholdSlider.value = currentThresholdPercent;
+  }
+
   updateThresholdAndFilter(true);
   recommendationsSection.classList.remove('hidden');
-  recommendationsSection.scrollIntoView({ behavior: 'smooth' });
+
+  setStorage(STORAGE_KEYS.ANSWERS, userAnswers);
+  setStorage(STORAGE_KEYS.QUIZ_STATE, {
+    completed: true,
+    threshold: currentThresholdPercent,
+    recActiveCategory: recActiveCategory
+  });
+
+  if (!isSilentRestore) {
+    recommendationsSection.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
 function updateThresholdAndFilter(isInitial = false) {
@@ -310,8 +371,13 @@ function renderTopMatches() {
       .map(b => `<span class="card-chip" style="background: #e8f3f3; color: #194648; border-color: #bee0e0;">${b}</span>`)
       .join('');
 
+    const isFav = favoriteHobbyIds.has(hobby.id);
+
     card.innerHTML = `
       <div class="match-rank-tag">#${hobby.recommendationRank} Öneri</div>
+      <button class="card-fav-btn ${isFav ? 'active' : ''}" data-hobby-id="${hobby.id}" style="top: 14px; right: 90px;" aria-label="Favorilere ekle/çıkar" title="${isFav ? 'Favorilerden çıkar' : 'Favorilere ekle'}">
+        ${isFav ? '❤️' : '🤍'}
+      </button>
       <div class="match-score-badge">%${hobby.matchPercentage} Uyum</div>
       <img src="${hobby.imageUrl}" alt="${hobby.name}" class="top-match-image" loading="lazy" />
       <div class="top-match-body">
@@ -337,6 +403,14 @@ function renderTopMatches() {
       </div>
     `;
 
+    const favBtn = card.querySelector('.card-fav-btn');
+    if (favBtn) {
+      favBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFavoriteHobby(hobby.id, e);
+      });
+    }
+
     card.addEventListener('click', () => openHobbyDetail(hobby));
     topMatchesGrid.appendChild(card);
   });
@@ -346,6 +420,7 @@ function renderTopMatches() {
 // HOBBY CATALOG GRID & DYNAMIC COUNTS
 // ============================================================================
 function updateCategoryFilterPills() {
+  const favCount = favoriteHobbyIds.size;
   const counts = {
     all: HOBBIES.length,
     craft_making: HOBBIES.filter(h => h.category === 'craft_making').length,
@@ -357,6 +432,7 @@ function updateCategoryFilterPills() {
 
   categoryFilterBar.innerHTML = `
     <button class="filter-pill ${currentFilteredCategory === 'all' ? 'active' : ''}" data-category="all">Tümü (${counts.all})</button>
+    ${favCount > 0 ? `<button class="filter-pill ${currentFilteredCategory === 'favorites' ? 'active' : ''}" data-category="favorites" style="border-color: #f7a8a8; color: ${currentFilteredCategory === 'favorites' ? '#ffffff' : '#c92a2a'}; background: ${currentFilteredCategory === 'favorites' ? '#d94b4b' : '#fff5f5'};">❤️ Favorilerim (${favCount})</button>` : ''}
     <button class="filter-pill ${currentFilteredCategory === 'craft_making' ? 'active' : ''}" data-category="craft_making">🎨 El Sanatları (${counts.craft_making})</button>
     <button class="filter-pill ${currentFilteredCategory === 'mental_focus' ? 'active' : ''}" data-category="mental_focus">🧠 Zihinsel Odak (${counts.mental_focus})</button>
     <button class="filter-pill ${currentFilteredCategory === 'physical_movement' ? 'active' : ''}" data-category="physical_movement">🧗 Fiziksel Hareket (${counts.physical_movement})</button>
@@ -367,7 +443,9 @@ function updateCategoryFilterPills() {
 
 function getFilteredHobbies() {
   return HOBBIES.filter(hobby => {
-    if (currentFilteredCategory !== 'all' && hobby.category !== currentFilteredCategory) {
+    if (currentFilteredCategory === 'favorites') {
+      if (!favoriteHobbyIds.has(hobby.id)) return false;
+    } else if (currentFilteredCategory !== 'all' && hobby.category !== currentFilteredCategory) {
       return false;
     }
 
@@ -430,12 +508,17 @@ function renderCatalogGrid() {
       .map(b => `<span class="card-chip">${b}</span>`)
       .join('');
 
+    const isFav = favoriteHobbyIds.has(hobby.id);
+
     card.innerHTML = `
       <!-- Top Half: "Hobi Resmi" -->
       <div class="card-top-half">
         <img src="${hobby.imageUrl}" alt="${hobby.name}" class="card-top-image" loading="lazy" />
         <div class="card-image-gradient"></div>
         <span class="card-category-tag">${hobby.categoryNameTr}</span>
+        <button class="card-fav-btn ${isFav ? 'active' : ''}" data-hobby-id="${hobby.id}" aria-label="Favorilere ekle/çıkar" title="${isFav ? 'Favorilerden çıkar' : 'Favorilere ekle'}">
+          ${isFav ? '❤️' : '🤍'}
+        </button>
         <span class="card-budget-badge">${costLabel}</span>
       </div>
 
@@ -458,6 +541,14 @@ function renderCatalogGrid() {
         </div>
       </div>
     `;
+
+    const favBtn = card.querySelector('.card-fav-btn');
+    if (favBtn) {
+      favBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFavoriteHobby(hobby.id, e);
+      });
+    }
 
     card.addEventListener('click', () => openHobbyDetail(hobby));
     hobbyGrid.appendChild(card);
@@ -575,11 +666,92 @@ function openHobbyDetail(hobby) {
     frictionList.appendChild(li);
   });
 
+  updateModalFavBtn(hobby.id);
   detailModal.classList.remove('hidden');
 }
 
 function closeHobbyDetail() {
   detailModal.classList.add('hidden');
+}
+
+// ============================================================================
+// FAVORITES & STORAGE CONTROLS (HER CİHAZA ÖZEL)
+// ============================================================================
+function toggleFavoriteHobby(hobbyId, e) {
+  if (e) e.stopPropagation();
+  if (favoriteHobbyIds.has(hobbyId)) {
+    favoriteHobbyIds.delete(hobbyId);
+    showToast('Favorilerden çıkarıldı');
+  } else {
+    favoriteHobbyIds.add(hobbyId);
+    showToast('Favorilere eklendi ❤️');
+  }
+  setStorage(STORAGE_KEYS.FAVORITES, Array.from(favoriteHobbyIds));
+  updateCategoryFilterPills();
+  renderCatalogGrid();
+  renderTopMatches();
+  updateModalFavBtn(hobbyId);
+}
+
+function updateModalFavBtn(hobbyId) {
+  const modalFavBtn = document.getElementById('modal-fav-btn');
+  if (!modalFavBtn) return;
+  const isFav = favoriteHobbyIds.has(hobbyId);
+  modalFavBtn.innerHTML = isFav ? '❤️ Favorilerimden Çıkar' : '🤍 Favorilere Ekle';
+  modalFavBtn.classList.toggle('active', isFav);
+}
+
+function saveCatalogFilters() {
+  setStorage(STORAGE_KEYS.FILTERS, {
+    category: currentFilteredCategory,
+    budget: activeBudgetFilter,
+    location: activeLocationFilter,
+    search: activeSearchQuery
+  });
+}
+
+function restoreCatalogFilters() {
+  const saved = getStorage(STORAGE_KEYS.FILTERS);
+  if (saved) {
+    if (saved.category) currentFilteredCategory = saved.category;
+    if (saved.budget && budgetFilterSelect) {
+      activeBudgetFilter = saved.budget;
+      budgetFilterSelect.value = saved.budget;
+    }
+    if (saved.location && locationFilterSelect) {
+      activeLocationFilter = saved.location;
+      locationFilterSelect.value = saved.location;
+    }
+    if (saved.search && hobbySearchInput) {
+      activeSearchQuery = saved.search;
+      hobbySearchInput.value = saved.search;
+    }
+  }
+}
+
+function resetCatalogFilters() {
+  currentFilteredCategory = 'all';
+  activeBudgetFilter = 'all';
+  activeLocationFilter = 'all';
+  activeSearchQuery = '';
+
+  if (budgetFilterSelect) budgetFilterSelect.value = 'all';
+  if (locationFilterSelect) locationFilterSelect.value = 'all';
+  if (hobbySearchInput) hobbySearchInput.value = '';
+
+  saveCatalogFilters();
+  updateCategoryFilterPills();
+  currentVisibleLimit = ITEMS_PER_PAGE;
+  renderCatalogGrid();
+  showToast('Filtreler varsayılana sıfırlandı');
+}
+
+function clearRecommendations() {
+  removeStorage(STORAGE_KEYS.QUIZ_STATE);
+  recommendationsSection.classList.add('hidden');
+  allScoredHobbies = [];
+  topRecommendedHobbies = [];
+  showToast('Öneriler temizlendi');
 }
 
 // Notifications & Utils
@@ -656,6 +828,7 @@ function initEventListeners() {
     pill.classList.add('active');
     currentFilteredCategory = pill.getAttribute('data-category');
     currentVisibleLimit = ITEMS_PER_PAGE;
+    saveCatalogFilters();
     renderCatalogGrid();
   });
 
@@ -667,6 +840,10 @@ function initEventListeners() {
       pill.classList.add('active');
       recActiveCategory = pill.getAttribute('data-category');
       renderTopMatches();
+
+      const quizState = getStorage(STORAGE_KEYS.QUIZ_STATE, {});
+      quizState.recActiveCategory = recActiveCategory;
+      setStorage(STORAGE_KEYS.QUIZ_STATE, quizState);
     });
   }
 
@@ -674,26 +851,55 @@ function initEventListeners() {
     matchThresholdSlider.addEventListener('input', (e) => {
       currentThresholdPercent = Number(e.target.value);
       updateThresholdAndFilter(false);
+
+      const quizState = getStorage(STORAGE_KEYS.QUIZ_STATE, {});
+      quizState.threshold = currentThresholdPercent;
+      setStorage(STORAGE_KEYS.QUIZ_STATE, quizState);
     });
   }
 
   hobbySearchInput.addEventListener('input', (e) => {
     activeSearchQuery = e.target.value;
     currentVisibleLimit = ITEMS_PER_PAGE;
+    saveCatalogFilters();
     renderCatalogGrid();
   });
 
   budgetFilterSelect.addEventListener('change', (e) => {
     activeBudgetFilter = e.target.value;
     currentVisibleLimit = ITEMS_PER_PAGE;
+    saveCatalogFilters();
     renderCatalogGrid();
   });
 
   locationFilterSelect.addEventListener('change', (e) => {
     activeLocationFilter = e.target.value;
     currentVisibleLimit = ITEMS_PER_PAGE;
+    saveCatalogFilters();
     renderCatalogGrid();
   });
+
+  // Filtreleri sıfırla butonu
+  const btnResetCatalogFilters = document.getElementById('btn-reset-catalog-filters');
+  if (btnResetCatalogFilters) {
+    btnResetCatalogFilters.addEventListener('click', resetCatalogFilters);
+  }
+
+  // Önerileri temizle butonu
+  const btnClearRecommendations = document.getElementById('btn-clear-recommendations');
+  if (btnClearRecommendations) {
+    btnClearRecommendations.addEventListener('click', clearRecommendations);
+  }
+
+  // Detay modalındaki favori butonu
+  const modalFavBtn = document.getElementById('modal-fav-btn');
+  if (modalFavBtn) {
+    modalFavBtn.addEventListener('click', () => {
+      if (activeHobbyForModal) {
+        toggleFavoriteHobby(activeHobbyForModal.id);
+      }
+    });
+  }
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -722,6 +928,12 @@ function initScreentimeCalculator() {
   const calcLanguage = document.getElementById('st-calc-language');
 
   if (!slider) return;
+
+  // Cihazda önceden kaydedilmiş ekran süresi varsa yükle
+  const savedSt = getStorage(STORAGE_KEYS.SCREENTIME);
+  if (savedSt !== null && !isNaN(savedSt)) {
+    slider.value = savedSt;
+  }
 
   function updateValues(hours) {
     const formattedHours = Number.isInteger(hours) ? hours : hours.toFixed(1);
@@ -757,7 +969,9 @@ function initScreentimeCalculator() {
   }
 
   slider.addEventListener('input', (e) => {
-    updateValues(parseFloat(e.target.value));
+    const val = parseFloat(e.target.value);
+    updateValues(val);
+    setStorage(STORAGE_KEYS.SCREENTIME, val);
   });
 
   // initial call
@@ -785,7 +999,14 @@ function initScreentimeCalculator() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  restoreCatalogFilters();
   updateCategoryFilterPills();
   renderCatalogGrid();
   initEventListeners();
+
+  // Her cihazda daha önce tamamlanmış hobi testi varsa otomatik yükle
+  const savedQuiz = getStorage(STORAGE_KEYS.QUIZ_STATE);
+  if (savedQuiz && savedQuiz.completed) {
+    finishWizardAndShowResults(true); // Sessizce sonuçları açar, sayfayı zıplatmaz
+  }
 });
