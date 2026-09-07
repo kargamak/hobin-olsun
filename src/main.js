@@ -733,9 +733,9 @@ function initScreentimeCalculator() {
     const awakePercent = Math.min(100, Math.round((hours / 16) * 100));
     const masteryCount = Math.max(1, Math.floor(yearlyHours / 365));
 
-    if (yearlyHoursEl) yearlyHoursEl.textContent = yearlyHours.toLocaleString('tr-TR');
-    if (yearlyDaysEl) yearlyDaysEl.textContent = `= Yılda tam ${yearlyDays} gün kesintisiz kaydırma!`;
-    if (awakePercentEl) awakePercentEl.textContent = `%${awakePercent}`;
+    if (yearlyHoursEl) yearlyHoursEl.textContent = `${yearlyHours.toLocaleString('tr-TR')} Saat / Yıl`;
+    if (yearlyDaysEl) yearlyDaysEl.textContent = `= Tam ${yearlyDays} gün kesintisiz ekran!`;
+    if (awakePercentEl) awakePercentEl.textContent = `%${awakePercent} Kayıp`;
     if (hobbiesMasteryEl) hobbiesMasteryEl.textContent = masteryCount > 1 ? `${masteryCount} - ${masteryCount + 1}` : '1 - 2';
 
     const achieveHoursHighlight = document.getElementById('st-achieve-hours-highlight');
@@ -743,8 +743,7 @@ function initScreentimeCalculator() {
 
     const lossDescDays = document.getElementById('loss-desc-days');
     if (lossDescDays) {
-      const monthsApprox = (yearlyDays / 30).toFixed(1);
-      lossDescDays.textContent = `1 yılda tam ${yearlyDays} gün (yaklaşık ${monthsApprox} ay!) boyunca gözlerin aralıksız ekrana kilitli kaldı.`;
+      lossDescDays.textContent = `${yearlyDays} gün kayıp • Odak tükenişi & 0 kalıcı eser`;
     }
 
     if (calcInstrument) calcInstrument.textContent = Math.max(2, Math.round(yearlyHours / 180));

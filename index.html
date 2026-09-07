@@ -76,15 +76,13 @@
           </p>
         </div>
 
-        <!-- Interactive Screen Time vs. Life Calculator Card -->
+        <!-- Interactive Screen Time vs. Life Calculator Card (Compact & Cohesive) -->
         <div class="screentime-card">
-          <div class="screentime-card-header">
-            <div class="screentime-header-left">
-              <span class="screentime-icon">⏳</span>
-              <div>
-                <h3 class="screentime-card-title">Kişisel Ekran Süresi & Gerçek Zaman Simülatörü</h3>
-                <p class="screentime-card-sub">Günde ekranda harcadığın o "boş" vakit aslında bir yılda neye denk geliyor?</p>
-              </div>
+          <!-- Top Control Row: Title + Hours Badge -->
+          <div class="screentime-top-bar">
+            <div class="screentime-title-group">
+              <span class="screentime-mini-icon">⏳</span>
+              <h3 class="screentime-card-title">Zaman Simülatörü: 1 Yılda Ne Kaybediyor, Ne Kazanabilirdin?</h3>
             </div>
             <div class="screentime-hours-badge">
               <span class="st-badge-num" id="st-hours-display">4</span>
@@ -92,139 +90,94 @@
             </div>
           </div>
 
-          <div class="screentime-slider-wrapper">
-            <div class="st-slider-meta">
-              <span>Günde telefonda anlamsızca harcanan süre:</span>
-              <strong id="st-slider-caption">Günde 4 Saat</strong>
-            </div>
+          <!-- Slider Row -->
+          <div class="screentime-slider-compact">
             <input type="range" id="screentime-slider" min="1" max="9" step="0.5" value="4" aria-label="Günlük telefon ekran süresi">
             <div class="st-slider-ticks">
               <span>1 Saat (Hafif)</span>
-              <span>4 Saat (Türkiye Ortalaması)</span>
+              <span>4 Saat (Ortalama)</span>
               <span>8+ Saat (Ağır Tutsaklık)</span>
             </div>
           </div>
 
-          <!-- Impact Metrics Grid -->
-          <div class="st-metrics-grid">
-            <div class="st-metric-item danger">
-              <span class="st-metric-icon">🗓️</span>
-              <div class="st-metric-data">
-                <span class="st-metric-value" id="st-yearly-hours">1.460</span>
-                <span class="st-metric-unit">Saat / Yıl Ekran Başında</span>
+          <!-- Compact 3-Stat Ribbon -->
+          <div class="st-compact-ribbon">
+            <div class="st-ribbon-item danger">
+              <span class="st-ribbon-icon">🗓️</span>
+              <div class="st-ribbon-text">
+                <strong id="st-yearly-hours">1.460 Saat / Yıl</strong>
+                <span id="st-yearly-days">= Tam 61 gün kesintisiz ekran!</span>
               </div>
-              <span class="st-metric-note" id="st-yearly-days">= Yılda tam 61 gün kesintisiz kaydırma!</span>
             </div>
-
-            <div class="st-metric-item warning">
-              <span class="st-metric-icon">💤</span>
-              <div class="st-metric-data">
-                <span class="st-metric-value" id="st-awake-percent">%25</span>
-                <span class="st-metric-unit">Uyanık Hayatının Kaybı</span>
+            <div class="st-ribbon-item warning">
+              <span class="st-ribbon-icon">💤</span>
+              <div class="st-ribbon-text">
+                <strong id="st-awake-percent">%25 Kayıp</strong>
+                <span>Uyanık hayatının çeyreği</span>
               </div>
-              <span class="st-metric-note">Uyku dışındaki yaşamının çeyreği</span>
             </div>
-
-            <div class="st-metric-item success">
-              <span class="st-metric-icon">💡</span>
-              <div class="st-metric-data">
-                <span class="st-metric-value" id="st-hobbies-mastery">3 - 4</span>
-                <span class="st-metric-unit">Yeni Hobi Kazanımı</span>
+            <div class="st-ribbon-item loss">
+              <span class="st-ribbon-icon">📉</span>
+              <div class="st-ribbon-text">
+                <strong>1 Yıllık Kayıp</strong>
+                <span id="loss-desc-days">Zihinsel odak tükenişi & 0 kalıcı eser</span>
               </div>
-              <span class="st-metric-note">Bu sürede sıfırdan ustalaşabilirdin</span>
             </div>
           </div>
 
-          <!-- What you lose annually vs what you could accomplish in 1 year -->
-          <div class="st-achievements-box">
-            <div class="st-achieve-header-group">
-              <h4 class="st-achieve-title">
-                <span>⏱️ Sadece 1 Yılda Telefona Harcadığın Bu <strong id="st-achieve-hours-highlight">1.460 Saatte</strong> Neler Kaybediyorsun & Neler Başarabilirdin?</span>
-              </h4>
-              <p class="st-achieve-subtitle">
-                "Vaktim yok" derken aslında 1 yılda devasa bir ömrü ekrana feda ediyoruz. İşte <strong>1 yıllık zaman diliminde</strong> kaybettiğin gerçekler ve yerine kazanabileceğin somut yetkinlikler:
-              </p>
+          <!-- Compact 6-Hobby Milestone Grid (Directly visible under slider!) -->
+          <div class="st-live-results">
+            <div class="st-results-header">
+              <span>🎨 Aynı süreyi bir hobiye verseydin 1 yılda başarabileceklerin:</span>
+              <strong class="st-hours-counter-badge" id="st-achieve-hours-highlight">1.460 Saatte</strong>
             </div>
 
-            <!-- Annual Loss Highlights -->
-            <div class="annual-loss-banner">
-              <div class="loss-badge">📉 1 Yıllık Kayıplar Karnesi</div>
-              <div class="loss-items-row">
-                <div class="loss-item">
-                  <span class="loss-icon">⏳</span>
-                  <div>
-                    <strong>Ömründen Çalınan Zaman:</strong>
-                    <span id="loss-desc-days">1 yılda tam 61 gün (2 ay!) boyunca gözlerin aralıksız ekrana kilitli kaldı.</span>
-                  </div>
-                </div>
-                <div class="loss-item">
-                  <span class="loss-icon">🧠</span>
-                  <div>
-                    <strong>Zihinsel Odaklanma:</strong>
-                    <span>15 saniyelik videolara alışarak derin düşünme, okuma ve sabretme becerini zayıflattın.</span>
-                  </div>
-                </div>
-                <div class="loss-item">
-                  <span class="loss-icon">📦</span>
-                  <div>
-                    <strong>Sıfır Kalıcı Eser:</strong>
-                    <span>Koca bir yılın sonunda elinde tutabileceğin veya gururla gösterebileceğin tek bir somut ürün kalmadı.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- What you could achieve in 1 year -->
-            <div class="st-achieve-subheading">
-              <span>🎨 Aynı 1 Yıl İçinde Bu Süreyi Bir Hobiye Ayırsaydın:</span>
-            </div>
-
-            <div class="st-achieve-grid">
-              <div class="st-achieve-pill">
-                <span class="st-pill-icon">🎸</span>
-                <div class="st-pill-content">
-                  <span class="st-pill-timeframe">1 Yılda • Haftada 3-4 Saat Ayırarak</span>
-                  <div class="st-pill-text">Gitarda veya piyanoda <strong id="st-calc-instrument">7</strong> farklı şarkıyı sıfırdan akıcı çalabilirdin.</div>
+            <div class="st-compact-grid">
+              <div class="st-compact-pill">
+                <span class="st-cp-icon">🎸</span>
+                <div class="st-cp-info">
+                  <span class="st-cp-label">Gitar / Piyano (Haftada 3-4s)</span>
+                  <div class="st-cp-val"><strong id="st-calc-instrument">7</strong> şarkıyı sıfırdan çalma</div>
                 </div>
               </div>
 
-              <div class="st-achieve-pill">
-                <span class="st-pill-icon">📚</span>
-                <div class="st-pill-content">
-                  <span class="st-pill-timeframe">1 Yılda • Günde Sadece 40 Dakika ile</span>
-                  <div class="st-pill-text"><strong id="st-calc-books">36</strong> adet başucu kitabını baştan sona bitirip ufkunu katlardın.</div>
+              <div class="st-compact-pill">
+                <span class="st-cp-icon">📚</span>
+                <div class="st-cp-info">
+                  <span class="st-cp-label">Kitap Okuma (Günde 40 dk)</span>
+                  <div class="st-cp-val"><strong id="st-calc-books">36</strong> adet kitap bitirme</div>
                 </div>
               </div>
 
-              <div class="st-achieve-pill">
-                <span class="st-pill-icon">🍞</span>
-                <div class="st-pill-content">
-                  <span class="st-pill-timeframe">1 Yılda • Haftada 1 Pazar Sabahı ile</span>
-                  <div class="st-pill-text"><strong id="st-calc-loaves">120+</strong> somun çıtır ekşi mayalı artisan ekmek veya gurme yemek üretirdin.</div>
+              <div class="st-compact-pill">
+                <span class="st-cp-icon">🍞</span>
+                <div class="st-cp-info">
+                  <span class="st-cp-label">Artisan Ekmek (Haftada 1 gün)</span>
+                  <div class="st-cp-val"><strong id="st-calc-loaves">120+</strong> somun çıtır ekmek</div>
                 </div>
               </div>
 
-              <div class="st-achieve-pill">
-                <span class="st-pill-icon">🧗</span>
-                <div class="st-pill-content">
-                  <span class="st-pill-timeframe">1 Yılda • Haftada 3 Gün 1'er Saat ile</span>
-                  <div class="st-pill-text"><strong id="st-calc-sport">180</strong> tırmanış/spor antrenmanı ile postürünü düzeltir, fit bir bedene kavuşurdun.</div>
+              <div class="st-compact-pill">
+                <span class="st-cp-icon">🧗</span>
+                <div class="st-cp-info">
+                  <span class="st-cp-label">Tırmanış & Spor (Haftada 3 gün)</span>
+                  <div class="st-cp-val"><strong id="st-calc-sport">180</strong> antrenman seansı</div>
                 </div>
               </div>
 
-              <div class="st-achieve-pill">
-                <span class="st-pill-icon">🪴</span>
-                <div class="st-pill-content">
-                  <span class="st-pill-timeframe">1 Yılda • Hafta Sonu 2 Saat ile</span>
-                  <div class="st-pill-text"><strong id="st-calc-craft">50+</strong> el yapımı seramik kupa, suluboya tablo veya ahşap oyma obje üretebilirdin.</div>
+              <div class="st-compact-pill">
+                <span class="st-cp-icon">🪴</span>
+                <div class="st-cp-info">
+                  <span class="st-cp-label">Seramik & Sanat (Hafta sonu)</span>
+                  <div class="st-cp-val"><strong id="st-calc-craft">50+</strong> el yapımı eser</div>
                 </div>
               </div>
 
-              <div class="st-achieve-pill">
-                <span class="st-pill-icon">🌍</span>
-                <div class="st-pill-content">
-                  <span class="st-pill-timeframe">1 Yılda • Günde 1 Saat Pratik ile</span>
-                  <div class="st-pill-text">Sıfırdan <strong id="st-calc-language">B2</strong> seviyesine ulaşıp yeni bir dilde akıcı sohbet edebilirdin.</div>
+              <div class="st-compact-pill">
+                <span class="st-cp-icon">🌍</span>
+                <div class="st-cp-info">
+                  <span class="st-cp-label">Yabancı Dil (Günde 1 saat)</span>
+                  <div class="st-cp-val"><strong id="st-calc-language">B2</strong> seviyesinde akıcılık</div>
                 </div>
               </div>
             </div>
