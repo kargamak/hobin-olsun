@@ -1,32 +1,56 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
   <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Background Gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#1b4749"/>
-      <stop offset="100%" stop-color="#2d6a6d"/>
+      <stop offset="50%" stop-color="#123032"/>
+      <stop offset="100%" stop-color="#0a1d1e"/>
     </linearGradient>
-    <linearGradient id="sparkleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f29e74"/>
-      <stop offset="100%" stop-color="#e07a5f"/>
-    </linearGradient>
-    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
-      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0e2829" flood-opacity="0.3"/>
+
+    <!-- Center Glow -->
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="45%" stop-color="#ffeaa7" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#e07a5f" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Shadow -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000000" flood-opacity="0.45"/>
     </filter>
   </defs>
 
-  <!-- Rounded Squircle Base -->
-  <rect x="8" y="8" width="112" height="112" rx="30" ry="30" fill="url(#bgGrad)" filter="url(#shadow)"/>
-  <rect x="9.5" y="9.5" width="109" height="109" rx="28.5" ry="28.5" fill="none" stroke="rgba(255, 255, 255, 0.25)" stroke-width="2"/>
+  <!-- Squircle Base with smooth rounded edges -->
+  <rect x="6" y="6" width="116" height="116" rx="34" fill="url(#bg)" filter="url(#glow)"/>
+  
+  <!-- Rim highlight -->
+  <rect x="7.5" y="7.5" width="113" height="113" rx="32.5" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
 
-  <!-- "ho" Monogram Text -->
-  <text x="56" y="83" 
-        text-anchor="middle" 
-        font-family="'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
-        font-size="62" 
-        font-weight="900" 
-        letter-spacing="-4"
-        fill="#ffffff">ho</text>
+  <!-- Glowing Aura in center -->
+  <circle cx="64" cy="64" r="38" fill="url(#centerGlow)"/>
 
-  <!-- Sparkle Accent in top right -->
-  <path d="M96 24 Q97 34 107 35 Q97 36 96 46 Q95 36 85 35 Q95 34 96 24 Z" fill="url(#sparkleGrad)"/>
-  <circle cx="108" cy="22" r="2.5" fill="#f29e74"/>
+  <!-- The 4-pointed origami faceted passion star (Symbol of hobby, craftsmanship & discovery) -->
+  <!-- Top North Point (Coral Flame) -->
+  <polygon points="64,18 64,64 42,48" fill="#e07a5f"/>
+  <polygon points="64,18 86,48 64,64" fill="#ff8f70"/>
+
+  <!-- Right East Point (Warm Sunset Gold) -->
+  <polygon points="110,64 64,64 86,48" fill="#f4a261"/>
+  <polygon points="110,64 64,64 86,80" fill="#e76f51"/>
+
+  <!-- Bottom South Point (Artisan Mint Teal) -->
+  <polygon points="64,110 64,64 86,80" fill="#2a9d8f"/>
+  <polygon points="64,110 42,80 64,64" fill="#1b6e66"/>
+
+  <!-- Left West Point (Emerald Green) -->
+  <polygon points="18,64 64,64 42,80" fill="#52b788"/>
+  <polygon points="18,64 64,64 42,48" fill="#74c69d"/>
+
+  <!-- Center Diamond Core -->
+  <polygon points="64,50 78,64 64,78 50,64" fill="#ffffff" opacity="0.95"/>
+  <circle cx="64" cy="64" r="5" fill="#e07a5f"/>
+
+  <!-- Accent Sparkles -->
+  <circle cx="98" cy="28" r="3" fill="#ffd166"/>
+  <circle cx="30" cy="100" r="2.5" fill="#48cae4"/>
 </svg>
