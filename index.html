@@ -25,6 +25,7 @@
       </div>
 
       <nav class="nav-actions">
+        <button class="nav-link-btn" id="btn-nav-manifesto">Neden Hobin Olsun?</button>
         <button class="nav-link-btn" id="btn-show-all-hobbies">Hobi Kataloğu</button>
         <button class="nav-link-btn" id="btn-methodology">Nasıl Çalışır?</button>
         <button class="cta-pill-small" id="nav-wizard-btn">Hobi Bul ✨</button>
@@ -54,6 +55,192 @@
             <span class="cta-arrow">→</span>
           </button>
           <div class="cta-subnote">Sadece 1 dakikalık 7 soru • 100% Kişiselleştirilmiş Öneri</div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- Screen Time Awareness / Meaning Section -->
+    <section class="manifesto-section" id="screen-time-manifesto">
+      <div class="section-container">
+        <!-- Main Hook & Badge -->
+        <div class="manifesto-header">
+          <div class="manifesto-badge">
+            <span class="manifesto-badge-dot"></span>
+            <span>Ekranı Değil, Hayatını Kaydır</span>
+          </div>
+          <h2 class="manifesto-title">
+            Günde <span class="highlight-screentime">saatlerimizi</span> telefonda anlamsızca kaydırarak harcıyoruz.
+          </h2>
+          <p class="manifesto-lead">
+            Sosyal medyanın sonsuz akışında kaybolmak yerine, hadi bunu bırakalım da gerçekten sana ait, ruhunu doyuran <strong>bir hobin olsun!</strong>
+          </p>
+        </div>
+
+        <!-- Interactive Screen Time vs. Life Calculator Card -->
+        <div class="screentime-card">
+          <div class="screentime-card-header">
+            <div class="screentime-header-left">
+              <span class="screentime-icon">⏳</span>
+              <div>
+                <h3 class="screentime-card-title">Kişisel Ekran Süresi & Gerçek Zaman Simülatörü</h3>
+                <p class="screentime-card-sub">Günde ekranda harcadığın o "boş" vakit aslında bir yılda neye denk geliyor?</p>
+              </div>
+            </div>
+            <div class="screentime-hours-badge">
+              <span class="st-badge-num" id="st-hours-display">4</span>
+              <span class="st-badge-unit">Saat / Gün</span>
+            </div>
+          </div>
+
+          <div class="screentime-slider-wrapper">
+            <div class="st-slider-meta">
+              <span>Günde telefonda anlamsızca harcanan süre:</span>
+              <strong id="st-slider-caption">Günde 4 Saat</strong>
+            </div>
+            <input type="range" id="screentime-slider" min="1" max="9" step="0.5" value="4" aria-label="Günlük telefon ekran süresi">
+            <div class="st-slider-ticks">
+              <span>1 Saat (Hafif)</span>
+              <span>4 Saat (Türkiye Ortalaması)</span>
+              <span>8+ Saat (Ağır Tutsaklık)</span>
+            </div>
+          </div>
+
+          <!-- Impact Metrics Grid -->
+          <div class="st-metrics-grid">
+            <div class="st-metric-item danger">
+              <span class="st-metric-icon">🗓️</span>
+              <div class="st-metric-data">
+                <span class="st-metric-value" id="st-yearly-hours">1.460</span>
+                <span class="st-metric-unit">Saat / Yıl Ekran Başında</span>
+              </div>
+              <span class="st-metric-note" id="st-yearly-days">= Yılda tam 61 gün kesintisiz kaydırma!</span>
+            </div>
+
+            <div class="st-metric-item warning">
+              <span class="st-metric-icon">💤</span>
+              <div class="st-metric-data">
+                <span class="st-metric-value" id="st-awake-percent">%25</span>
+                <span class="st-metric-unit">Uyanık Hayatının Kaybı</span>
+              </div>
+              <span class="st-metric-note">Uyku dışındaki yaşamının çeyreği</span>
+            </div>
+
+            <div class="st-metric-item success">
+              <span class="st-metric-icon">💡</span>
+              <div class="st-metric-data">
+                <span class="st-metric-value" id="st-hobbies-mastery">3 - 4</span>
+                <span class="st-metric-unit">Yeni Hobi Kazanımı</span>
+              </div>
+              <span class="st-metric-note">Bu sürede sıfırdan ustalaşabilirdin</span>
+            </div>
+          </div>
+
+          <!-- What you could have accomplished instead -->
+          <div class="st-achievements-box">
+            <h4 class="st-achieve-title">🎨 Bu sürede telefona bakmak yerine neler başarabilirdin?</h4>
+            <div class="st-achieve-grid">
+              <div class="st-achieve-pill">
+                <span class="st-pill-icon">🎸</span>
+                <span class="st-pill-text"><strong id="st-calc-instrument">7</strong> enstrüman şarkısında ustalaşma</span>
+              </div>
+              <div class="st-achieve-pill">
+                <span class="st-pill-icon">📚</span>
+                <span class="st-pill-text"><strong id="st-calc-books">36</strong> adet kitap okuyup bitirme</span>
+              </div>
+              <div class="st-achieve-pill">
+                <span class="st-pill-icon">🍞</span>
+                <span class="st-pill-text"><strong id="st-calc-loaves">120+</strong> somun artisan ekşi mayalı ekmek</span>
+              </div>
+              <div class="st-achieve-pill">
+                <span class="st-pill-icon">🧗</span>
+                <span class="st-pill-text"><strong id="st-calc-sport">180</strong> tırmanış / spor seansı ile fit bir vücut</span>
+              </div>
+              <div class="st-achieve-pill">
+                <span class="st-pill-icon">🪴</span>
+                <span class="st-pill-text"><strong id="st-calc-craft">50+</strong> el yapımı kupa, suluboya veya ahşap işi</span>
+              </div>
+              <div class="st-achieve-pill">
+                <span class="st-pill-icon">🌍</span>
+                <span class="st-pill-text"><strong id="st-calc-language">B2</strong> seviyesinde yeni bir yabancı dil</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Psychological Contrast: Doomscrolling vs. Hobin Olsun -->
+        <div class="contrast-grid">
+          <div class="contrast-card doomscrolling">
+            <div class="contrast-card-header">
+              <span class="contrast-icon">📱 🌀</span>
+              <div>
+                <h3>Telefonda Anlamsızca Kaydırma</h3>
+                <span class="contrast-tag tag-negative">Sahte Dopamin Tuzağı</span>
+              </div>
+            </div>
+            <ul class="contrast-list">
+              <li>
+                <span class="c-bullet negative">✕</span>
+                <div><strong>Zihinsel Tükenmişlik:</strong> Saatlerin nasıl geçtiğini anlamaz, gün sonunda boşluk ve suçluluk hissedersin.</div>
+              </li>
+              <li>
+                <span class="c-bullet negative">✕</span>
+                <div><strong>Sürekli Pasif Tüketici:</strong> Başkalarının mükemmel görünen hayatlarını izleyip gizli bir yetersizlik yaşarsın.</div>
+              </li>
+              <li>
+                <span class="c-bullet negative">✕</span>
+                <div><strong>Sıfır Kalıcı Çıktı:</strong> Günlerce kaydırsan da günün sonunda elinde gösterebileceğin tek bir somut ürün kalmaz.</div>
+              </li>
+              <li>
+                <span class="c-bullet negative">✕</span>
+                <div><strong>Odak Dağılması:</strong> 15 saniyelik videolara alışan beyin zamanla derin düşünme ve sabretme gücünü kaybeder.</div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="contrast-card real-hobby">
+            <div class="contrast-card-header">
+              <span class="contrast-icon">🎨 🌿</span>
+              <div>
+                <h3>Bir Hobin Olduğunda</h3>
+                <span class="contrast-tag tag-positive">Derin Akış (Flow) & Gerçek Tatmin</span>
+              </div>
+            </div>
+            <ul class="contrast-list">
+              <li>
+                <span class="c-bullet positive">✓</span>
+                <div><strong>Zihinsel Dinginlik & Meditasyon:</strong> Kil, fırça, enstrüman veya sporla uğraşırken tüm ekran stresini unutursun.</div>
+              </li>
+              <li>
+                <span class="c-bullet positive">✓</span>
+                <div><strong>Üretici Olma Gücü:</strong> Kendi ellerinle ürettiğin fincanı kullanmak veya bir parçayı çalmak derin bir özsaygı kazandırır.</div>
+              </li>
+              <li>
+                <span class="c-bullet positive">✓</span>
+                <div><strong>İlk 15 Dakikada Zafer:</strong> Hobin Olsun sana ilk günden sonuç alabileceğin mikro adımlarla yol gösterir.</div>
+              </li>
+              <li>
+                <span class="c-bullet positive">✓</span>
+                <div><strong>Yeni Bir Kimlik & Anlam:</strong> 'Ben seramik yapıyorum', 'Ben tırmanışçıyım' diyebileceğin tutkulu bir kimlik kazanırsın.</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Bottom Motivation Call to Action -->
+        <div class="manifesto-cta-box">
+          <div class="manifesto-cta-content">
+            <h3>Şimdi Ekranı Bırak, Hayatına Bir Hobi Kat!</h3>
+            <p>1 dakikalık 7 basit soruyla bütçene, vaktine ve evine en uygun nokta atışı hobileri anında keşfet.</p>
+          </div>
+          <div class="manifesto-cta-actions">
+            <button class="manifesto-primary-btn" id="manifesto-start-wizard-btn">
+              <span>🎯 Sana Özel Hobiyi Bul</span>
+              <span class="btn-arrow">→</span>
+            </button>
+            <button class="manifesto-secondary-btn" id="manifesto-view-catalog-btn">
+              <span>147 Hobiyi İncele ↓</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>

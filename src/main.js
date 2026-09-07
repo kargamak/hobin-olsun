@@ -702,6 +702,78 @@ function initEventListeners() {
       methodologyModal.classList.add('hidden');
     }
   });
+
+  initScreentimeCalculator();
+}
+
+function initScreentimeCalculator() {
+  const slider = document.getElementById('screentime-slider');
+  const hoursDisplay = document.getElementById('st-hours-display');
+  const sliderCaption = document.getElementById('st-slider-caption');
+  const yearlyHoursEl = document.getElementById('st-yearly-hours');
+  const yearlyDaysEl = document.getElementById('st-yearly-days');
+  const awakePercentEl = document.getElementById('st-awake-percent');
+  const hobbiesMasteryEl = document.getElementById('st-hobbies-mastery');
+  const calcInstrument = document.getElementById('st-calc-instrument');
+  const calcBooks = document.getElementById('st-calc-books');
+  const calcLoaves = document.getElementById('st-calc-loaves');
+  const calcSport = document.getElementById('st-calc-sport');
+  const calcCraft = document.getElementById('st-calc-craft');
+  const calcLanguage = document.getElementById('st-calc-language');
+
+  if (!slider) return;
+
+  function updateValues(hours) {
+    const formattedHours = Number.isInteger(hours) ? hours : hours.toFixed(1);
+    if (hoursDisplay) hoursDisplay.textContent = formattedHours;
+    if (sliderCaption) sliderCaption.textContent = `Günde ${formattedHours} Saat`;
+
+    const yearlyHours = Math.round(hours * 365);
+    const yearlyDays = Math.round(yearlyHours / 24);
+    const awakePercent = Math.min(100, Math.round((hours / 16) * 100));
+    const masteryCount = Math.max(1, Math.floor(yearlyHours / 365));
+
+    if (yearlyHoursEl) yearlyHoursEl.textContent = yearlyHours.toLocaleString('tr-TR');
+    if (yearlyDaysEl) yearlyDaysEl.textContent = `= Yılda tam ${yearlyDays} gün kesintisiz kaydırma!`;
+    if (awakePercentEl) awakePercentEl.textContent = `%${awakePercent}`;
+    if (hobbiesMasteryEl) hobbiesMasteryEl.textContent = masteryCount > 1 ? `${masteryCount} - ${masteryCount + 1}` : '1 - 2';
+
+    if (calcInstrument) calcInstrument.textContent = Math.max(2, Math.round(yearlyHours / 180));
+    if (calcBooks) calcBooks.textContent = Math.max(4, Math.round(yearlyHours / 35));
+    if (calcLoaves) calcLoaves.textContent = `${Math.max(25, Math.round(yearlyHours / 10))}+`;
+    if (calcSport) calcSport.textContent = Math.max(30, Math.round(yearlyHours / 7));
+    if (calcCraft) calcCraft.textContent = `${Math.max(10, Math.round(yearlyHours / 22))}+`;
+    if (calcLanguage) {
+      calcLanguage.textContent = yearlyHours >= 700 ? 'C1' : (yearlyHours >= 450 ? 'B2' : (yearlyHours >= 250 ? 'B1' : 'A2'));
+    }
+  }
+
+  slider.addEventListener('input', (e) => {
+    updateValues(parseFloat(e.target.value));
+  });
+
+  // initial call
+  updateValues(parseFloat(slider.value));
+
+  // Navigation and CTA buttons
+  const btnNavManifesto = document.getElementById('btn-nav-manifesto');
+  if (btnNavManifesto) {
+    btnNavManifesto.addEventListener('click', () => {
+      document.getElementById('screen-time-manifesto')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  const manifestoStartWizard = document.getElementById('manifesto-start-wizard-btn');
+  if (manifestoStartWizard) {
+    manifestoStartWizard.addEventListener('click', openWizard);
+  }
+
+  const manifestoViewCatalog = document.getElementById('manifesto-view-catalog-btn');
+  if (manifestoViewCatalog) {
+    manifestoViewCatalog.addEventListener('click', () => {
+      document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

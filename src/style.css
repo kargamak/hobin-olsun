@@ -344,6 +344,571 @@ body {
 }
 
 /* ==========================================================================
+   SCREEN TIME AWARENESS / MANIFESTO SECTION
+   "Günde şu kadar saatimizi telefonda kaydırarak harcıyoruz..."
+   ========================================================================== */
+.manifesto-section {
+  padding: 60px 0 70px;
+  background: linear-gradient(180deg, rgba(247, 245, 242, 0.6) 0%, rgba(239, 245, 245, 0.9) 50%, rgba(251, 251, 249, 1) 100%);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.manifesto-header {
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto 40px;
+}
+
+.manifesto-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff2ed;
+  color: #c85028;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(200, 80, 40, 0.2);
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(200, 80, 40, 0.08);
+}
+
+.manifesto-badge-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #e07a5f;
+  border-radius: 50%;
+  animation: badge-pulse 1.8s infinite;
+}
+
+@keyframes badge-pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(224, 122, 95, 0.7); }
+  70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(224, 122, 95, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(224, 122, 95, 0); }
+}
+
+.manifesto-title {
+  font-family: var(--font-heading);
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+}
+
+.highlight-screentime {
+  color: #c85028;
+  position: relative;
+  display: inline-block;
+}
+
+.highlight-screentime::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: rgba(224, 122, 95, 0.25);
+  border-radius: 4px;
+  z-index: -1;
+}
+
+.manifesto-lead {
+  font-size: 1.15rem;
+  color: var(--text-body);
+  line-height: 1.7;
+}
+
+.manifesto-lead strong {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+/* Screentime Simulator Card */
+.screentime-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 36px 40px;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 16px 40px -10px rgba(45, 106, 109, 0.08), 0 4px 16px rgba(0, 0, 0, 0.03);
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.screentime-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 28px;
+}
+
+.screentime-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.screentime-icon {
+  font-size: 2.2rem;
+  background: #fbf5ee;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px rgba(224, 122, 95, 0.15);
+}
+
+.screentime-card-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.screentime-card-sub {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.screentime-hours-badge {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  background: linear-gradient(135deg, #fdf0ec 0%, #fae2db 100%);
+  border: 1.5px solid rgba(224, 122, 95, 0.3);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+}
+
+.st-badge-num {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #c85028;
+  line-height: 1;
+}
+
+.st-badge-unit {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #79341b;
+}
+
+/* Slider */
+.screentime-slider-wrapper {
+  margin-bottom: 32px;
+}
+
+.st-slider-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.98rem;
+  margin-bottom: 12px;
+  color: var(--text-body);
+}
+
+.st-slider-meta strong {
+  color: #c85028;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+#screentime-slider {
+  width: 100%;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: #e5ecec;
+  outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+#screentime-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e07a5f;
+  border: 3px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(224, 122, 95, 0.5);
+  cursor: grab;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+#screentime-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: #c85028;
+}
+
+#screentime-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+}
+
+.st-slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Metrics Grid */
+.st-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.st-metric-item {
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.st-metric-item:hover {
+  transform: translateY(-2px);
+}
+
+.st-metric-item.danger {
+  background: #fdf5f3;
+  border: 1px solid rgba(224, 122, 95, 0.2);
+}
+
+.st-metric-item.warning {
+  background: #fff9ee;
+  border: 1px solid rgba(230, 168, 34, 0.25);
+}
+
+.st-metric-item.success {
+  background: #f0f7f7;
+  border: 1px solid rgba(45, 106, 109, 0.2);
+}
+
+.st-metric-icon {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.st-metric-data {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.st-metric-value {
+  font-family: var(--font-heading);
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.st-metric-item.danger .st-metric-value { color: #b73a1e; }
+.st-metric-item.warning .st-metric-value { color: #a46f08; }
+.st-metric-item.success .st-metric-value { color: #1b4749; }
+
+.st-metric-unit {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.st-metric-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* What you could have accomplished box */
+.st-achievements-box {
+  background: #f8faf9;
+  border-radius: var(--radius-md);
+  padding: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.st-achieve-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.st-achieve-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.st-achieve-pill {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: transform 0.15s ease, border-color 0.2s ease;
+}
+
+.st-achieve-pill:hover {
+  transform: translateX(4px);
+  border-color: rgba(45, 106, 109, 0.3);
+}
+
+.st-pill-icon {
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.st-pill-text {
+  font-size: 0.92rem;
+  color: var(--text-body);
+  line-height: 1.35;
+}
+
+.st-pill-text strong {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+/* Psychological Contrast Grid */
+.contrast-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-bottom: 44px;
+}
+
+.contrast-card {
+  border-radius: var(--radius-lg);
+  padding: 32px 30px;
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.contrast-card:hover {
+  transform: translateY(-3px);
+}
+
+.contrast-card.doomscrolling {
+  background: #fbf7f6;
+  border: 1.5px solid rgba(224, 122, 95, 0.25);
+  box-shadow: 0 10px 24px rgba(224, 122, 95, 0.06);
+}
+
+.contrast-card.real-hobby {
+  background: #f4f9f9;
+  border: 1.5px solid rgba(45, 106, 109, 0.3);
+  box-shadow: 0 10px 24px rgba(45, 106, 109, 0.08);
+}
+
+.contrast-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.contrast-icon {
+  font-size: 2rem;
+  background: #ffffff;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.contrast-card-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.contrast-tag {
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.tag-negative {
+  background: #fcece8;
+  color: #c85028;
+}
+
+.tag-positive {
+  background: #e2f1f2;
+  color: var(--primary-dark);
+}
+
+.contrast-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contrast-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.94rem;
+  color: var(--text-body);
+  line-height: 1.5;
+}
+
+.c-bullet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.c-bullet.negative {
+  background: #fcdbd3;
+  color: #c85028;
+}
+
+.c-bullet.positive {
+  background: #cfebec;
+  color: var(--primary-dark);
+}
+
+.contrast-list strong {
+  color: var(--text-dark);
+}
+
+/* Manifesto Bottom CTA Box */
+.manifesto-cta-box {
+  background: linear-gradient(135deg, #1b4749 0%, #2d6a6d 100%);
+  border-radius: var(--radius-lg);
+  padding: 36px 44px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  box-shadow: 0 16px 36px rgba(27, 71, 73, 0.2);
+}
+
+.manifesto-cta-content h3 {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+
+.manifesto-cta-content p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.02rem;
+  max-width: 580px;
+}
+
+.manifesto-cta-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.manifesto-primary-btn {
+  background: #fbfbf9;
+  color: var(--primary-dark);
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 700;
+  border: none;
+  padding: 14px 28px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: var(--transition);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.manifesto-primary-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+.manifesto-secondary-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 0.98rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 14px 24px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.manifesto-secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 860px) {
+  .contrast-grid {
+    grid-template-columns: 1fr;
+  }
+  .screentime-card {
+    padding: 24px 20px;
+  }
+  .manifesto-title {
+    font-size: 1.8rem;
+  }
+  .manifesto-cta-box {
+    padding: 28px 24px;
+  }
+}
+
+/* ==========================================================================
    RECOMMENDATIONS SECTION (Visible upon completing quiz)
    ========================================================================== */
 .recommendations-section {
