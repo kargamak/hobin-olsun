@@ -738,6 +738,15 @@ function initScreentimeCalculator() {
     if (awakePercentEl) awakePercentEl.textContent = `%${awakePercent}`;
     if (hobbiesMasteryEl) hobbiesMasteryEl.textContent = masteryCount > 1 ? `${masteryCount} - ${masteryCount + 1}` : '1 - 2';
 
+    const achieveHoursHighlight = document.getElementById('st-achieve-hours-highlight');
+    if (achieveHoursHighlight) achieveHoursHighlight.textContent = `${yearlyHours.toLocaleString('tr-TR')} Saatte`;
+
+    const lossDescDays = document.getElementById('loss-desc-days');
+    if (lossDescDays) {
+      const monthsApprox = (yearlyDays / 30).toFixed(1);
+      lossDescDays.textContent = `1 yılda tam ${yearlyDays} gün (yaklaşık ${monthsApprox} ay!) boyunca gözlerin aralıksız ekrana kilitli kaldı.`;
+    }
+
     if (calcInstrument) calcInstrument.textContent = Math.max(2, Math.round(yearlyHours / 180));
     if (calcBooks) calcBooks.textContent = Math.max(4, Math.round(yearlyHours / 35));
     if (calcLoaves) calcLoaves.textContent = `${Math.max(25, Math.round(yearlyHours / 10))}+`;
