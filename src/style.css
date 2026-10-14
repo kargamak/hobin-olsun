@@ -343,6 +343,59 @@ body {
   font-weight: 500;
 }
 
+.hero-mode-pills {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.hero-mode-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.hero-mode-pill {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(45, 106, 109, 0.2);
+  color: var(--text-body);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(4px);
+}
+
+.hero-mode-pill small {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.hero-mode-pill:hover {
+  background: #ffffff;
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(45, 106, 109, 0.14);
+}
+
+.hero-mode-pill.featured {
+  background: #eaf4f4;
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
 /* ==========================================================================
    SCREEN TIME AWARENESS / MANIFESTO SECTION
    "Günde şu kadar saatimizi telefonda kaydırarak harcıyoruz..."
@@ -1633,7 +1686,7 @@ body {
    WIZARD MODAL (Smart Decision Wizard)
    ========================================================================== */
 .wizard-card {
-  max-width: 620px;
+  max-width: 660px;
 }
 
 .wizard-header {
@@ -1743,6 +1796,124 @@ body {
 .opt-sub {
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+/* Test Mode Selection in Wizard */
+.test-mode-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 580px) {
+  .test-mode-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+}
+
+.test-mode-card {
+  background: #fbfbfb;
+  border: 2px solid #eef2f2;
+  border-radius: var(--radius-md);
+  padding: 16px 14px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: var(--transition);
+  position: relative;
+  font-family: inherit;
+  width: 100%;
+}
+
+.test-mode-card:hover {
+  background: #f2f9f9;
+  border-color: #9dc7c8;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.test-mode-card.selected {
+  background: #eaf4f4;
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px rgba(45, 106, 109, 0.18);
+}
+
+.test-mode-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.test-mode-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--text-dark);
+}
+
+.test-mode-meta {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  display: inline-block;
+  align-self: flex-start;
+}
+
+.test-mode-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  flex-grow: 1;
+}
+
+.test-mode-sharpness {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  padding-top: 8px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.08);
+}
+
+.sharpness-meter {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.sharpness-bar {
+  display: inline-block;
+  width: 8px;
+  height: 10px;
+  background: #d8e2e2;
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+
+.sharpness-bar.filled {
+  background: var(--accent);
+}
+
+.badge-accent .sharpness-meter {
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.badge-accent .sharpness-bar {
+  background: #ffd3b6;
+  width: 6px;
+  height: 8px;
+}
+
+.badge-accent .sharpness-bar.filled {
+  background: #b84e2a;
 }
 
 .wizard-footer {

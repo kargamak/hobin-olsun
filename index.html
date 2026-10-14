@@ -77,7 +77,12 @@
             <span class="cta-text">Tıkla ve sana en uygun hobileri bul!</span>
             <span class="cta-arrow">→</span>
           </button>
-          <div class="cta-subnote">Sadece 1 dakikalık 7 soru • 100% Kişiselleştirilmiş Öneri</div>
+          <div class="hero-mode-pills">
+            <span class="hero-mode-label">Testini seç:</span>
+            <button type="button" class="hero-mode-pill" data-launch-mode="quick" title="1 dakikada hızlı yön bul">⚡ Hızlı Test <small>(8 soru)</small></button>
+            <button type="button" class="hero-mode-pill featured" data-launch-mode="balanced" title="2 dakikada dengeli analiz">⚖️ Dengeli Test <small>(14 soru)</small></button>
+            <button type="button" class="hero-mode-pill" data-launch-mode="detailed" title="3 dakikada en keskin nokta atışı">🔬 Detaylı Test <small>(20 soru)</small></button>
+          </div>
         </div>
       </div>
     </section>
@@ -285,7 +290,7 @@
     <section class="recommendations-section hidden" id="recommendations-section">
       <div class="section-container">
         <div class="recommendations-header">
-          <div class="badge-accent">🎯 Eşleştirme Sonuçları</div>
+          <div class="badge-accent" id="rec-mode-badge">🎯 Eşleştirme Sonuçları</div>
           <h2 id="rec-heading-title">Senin İçin %75+ Uyum Sağlayan Hobiler</h2>
           <p id="recommendation-summary-text">Belirttiğiniz kriterlere göre %75 ve üzeri uyum sağlayan hobiler listelenmiştir. Kategorilere göre filtreleyebilirsiniz.</p>
 
@@ -319,6 +324,7 @@
 
         <div class="recommendations-actions">
           <button class="secondary-btn" id="btn-recalculate">🔄 Kriterleri Değiştir</button>
+          <button class="primary-btn" id="btn-upgrade-test" style="display: none;"></button>
           <button class="secondary-btn" id="btn-clear-recommendations" title="Önerileri temizle">🗑️ Önerileri Temizle</button>
           <a href="#catalog-section" class="text-link-btn">Tüm Kataloğu İncele (147 hobi) ↓</a>
         </div>
@@ -522,19 +528,25 @@
           <div class="method-step">
             <span class="m-num">1</span>
             <div>
-              <strong>Kriter Ağırlıklandırması:</strong> Bütçe (%30), Zaman & Hazırlık Yükü (%25), Yaşam Alanı & Mekân (%20), Hızlı Ödül Eşiği (%15) ve Gürültü Toleransı (%10) matrisi üzerinden puanlama yapılır.
+              <strong>3 Kademeli Test Modu:</strong> <em>⚡ Hızlı Test (8 soru)</em> ile 1 dakikada temel yönünüzü çizebilir; <em>⚖️ Dengeli Test (14 soru)</em> ile seans süresi, saklama alanı ve zihinsel mod dengesini yakalayabilir; <em>🔬 Detaylı Test (20 soru)</em> ile taşınabilirlik, duyusal çekim, kuralcılık ve pazarlıksız kırmızı çizginizi belirterek ultra keskin nokta atışı sonuçlar alabilirsiniz.
             </div>
           </div>
           <div class="method-step">
             <span class="m-num">2</span>
             <div>
-              <strong>HobbyEntity Taksonomisi:</strong> Her hobi PRD şemasına uygun olarak hazırlık süresi, temizlik yükü, sürtünme noktaları ve başlangıç kitiyle modellenmiştir.
+              <strong>Kriter Ağırlıklandırması &amp; Geometrik Uyum:</strong> Bütçe (%22), Zaman (%18), Mekân (%18), Fiziksel Efor (%18), Dağınıklık (%10), Gürültü (%7) ve Hızlı Ödül (%7) matrisi. Düz ortalama yerine geometrik harmanlama kullanılır; tek bir kritik zıtlık (ör. sessizlik arayan kişiye gürültülü hobi) skoru anında düşürür.
             </div>
           </div>
           <div class="method-step">
             <span class="m-num">3</span>
             <div>
-              <strong>İlk Adım İtici Gücü:</strong> Kullanıcının hevesini kaybetmemesi için her öneriye ilk 15-30 dakikada tamamlanabilecek mikro bir eylem atanır.
+              <strong>Şişirilmemiş, Gerçekçi Puanlama:</strong> "Fark etmez" cevapları artık haksız tam puan vermez; nötr kalibre edilir. Soru sayısı ve derinlik arttıkça kalibrasyon eğrisi sıkılaşır, böylece gerçekten uyumlu hobiler öne çıkar.
+            </div>
+          </div>
+          <div class="method-step">
+            <span class="m-num">4</span>
+            <div>
+              <strong>İlk 15-30 Dakika Mikro-Eylemi:</strong> Her hobi için karar felcini kıran, ertelemeyi önleyen somut bir başlangıç eylemi ve şeffaf başlangıç kiti sunulur.
             </div>
           </div>
         </div>

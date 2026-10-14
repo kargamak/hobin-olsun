@@ -34,15 +34,28 @@ function removeStorage(key) {
 }
 
 // State
-let currentStep = 0;
+let currentStep = -1; // -1 = test modu seçim ekranı
 const userAnswers = {
+  interest: 'any',
   budgetLimit: 'low',
-  weeklyHours: '3',
-  physicalIntensity: 'light',
+  weeklyHours: '4',
+  screenAttitude: 'no_screen',
   location: 'any',
+  physicalIntensity: 'light',
   messTolerance: 'clean',
   noiseTolerance: 'silent',
-  firstWinSpeed: 'immediate'
+  sessionLength: 'deep',
+  firstWinSpeed: 'immediate',
+  monthlyBudget: 'up_to_200',
+  storageFootprint: 'box',
+  mentalState: 'creative_spark',
+  socialStyle: 'solo',
+  portability: 'fixed',
+  outputType: 'physical_object',
+  structureStyle: 'forgiving',
+  sensoryPreference: 'tactile',
+  pacingStyle: 'repetitive_flow',
+  priority: 'interest'
 };
 
 // Cihazda önceden kaydedilmiş cevaplar varsa yükle
@@ -63,10 +76,56 @@ let activeLocationFilter = 'all';
 const ITEMS_PER_PAGE = 18;
 let currentVisibleLimit = ITEMS_PER_PAGE;
 
-// Wizard Questions Definitions
-const WIZARD_STEPS = [
+// Test Modları: soru sayısı arttıkça puanlama motoru daha katı kalibre edilir
+const TEST_MODES = {
+  quick: {
+    icon: '⚡',
+    title: 'Hızlı Test',
+    duration: '~1 dk',
+    sharpness: 1,
+    desc: 'Temel 8 soru. Bütçe, vakit, ekran/analog ve mekan filtreleriyle genel yön bul.'
+  },
+  balanced: {
+    icon: '⚖️',
+    title: 'Dengeli Test',
+    duration: '~2 dk',
+    sharpness: 2,
+    desc: 'Kapsamlı 14 soru. Seans süresi, alan, zihinsel mod ve sosyal tarz dahil dengeli analiz.'
+  },
+  detailed: {
+    icon: '🔬',
+    title: 'Ultra Keskin Test',
+    duration: '~3-4 dk',
+    sharpness: 3,
+    desc: 'En derin 20 soru. Taşınabilirlik, duyusal çekim, kuralcılık ve kırmızı çizgi dahil nokta atışı.'
+  }
+};
+const MODE_KEYS = Object.keys(TEST_MODES);
+
+const savedQuizForMode = getStorage(STORAGE_KEYS.QUIZ_STATE, {});
+let selectedTestMode = MODE_KEYS.includes(savedQuizForMode.mode) ? savedQuizForMode.mode : 'balanced';
+
+// 20 Kapsamlı Soru Tanımı (modes: hangi testlerde sorulacağı)
+const ALL_WIZARD_STEPS = [
+  // --- 1. İlgi Alanı ---
+  {
+    key: 'interest',
+    modes: ['quick', 'balanced', 'detailed'],
+    title: 'Bir hobiden en çok ne bekliyorsun?',
+    description: 'Motivasyonun, önerilerin hangi dünyadan geleceğini belirleyen en güçlü sinyaldir.',
+    options: [
+      { value: 'craft_making', icon: '🎨', title: 'Elimle Somut Bir Şey Üretmek', sub: 'Dokunabileceğim, sergileyebileceğim el emeği işler' },
+      { value: 'mental_focus', icon: '🧠', title: 'Zihnimi Zorlamak & Odaklanmak', sub: 'Strateji, bulmaca, hafıza veya meditatif odak' },
+      { value: 'physical_movement', icon: '🧗', title: 'Bedenimi Hareket Ettirmek', sub: 'Spor, denge, kondisyon ve enerji atmak' },
+      { value: 'digital_creative', icon: '💻', title: 'Dijital Dünyada Üretmek', sub: 'Kodlama, tasarım, 3D, müzik veya video' },
+      { value: 'collecting_curation', icon: '☕', title: 'Keşfetmek, Tatmak & Biriktirmek', sub: 'Koleksiyon, tadım, doğa gözlemi ve kürasyon' },
+      { value: 'any', icon: '✨', title: 'Henüz Bilmiyorum / Açığım', sub: 'Her alandan öneri görmek istiyorum' }
+    ]
+  },
+  // --- 2. Bütçe ---
   {
     key: 'budgetLimit',
+    modes: ['quick', 'balanced', 'detailed'],
     title: 'Yeni bir hobiye başlangıçta ne kadar bütçe ayırabilirsin?',
     description: 'Hobin, gizli maliyetleri ve sarf malzemesi yükünü bu tercihe göre hesaplar.',
     options: [
@@ -76,9 +135,11 @@ const WIZARD_STEPS = [
       { value: 'flexible', icon: '✨', title: 'Esnek / Bütçe İkinci Planda', sub: 'Yeter ki doğru ve keyifli bir uğraş olsun' }
     ]
   },
+  // --- 3. Haftalık Süre ---
   {
     key: 'weeklyHours',
-    title: 'Haftada ortalama ne kadar vakit ayırabileceksin?',
+    modes: ['quick', 'balanced', 'detailed'],
+    title: 'Haftada ortalama toplam ne kadar vakit ayırabileceksin?',
     description: 'Zaman-ödül uyuşmazlığını engellemek için gerçekçi bir saat seçin.',
     options: [
       { value: '2', icon: '⏱️', title: 'Haftada 1 - 2 Saat', sub: 'Hızlıca başlayıp bırakılabilecek, düşük zaman yükü' },
@@ -86,19 +147,22 @@ const WIZARD_STEPS = [
       { value: '7', icon: '🚀', title: 'Haftada 6+ Saat', sub: 'Derin odaklanma ve hızlı ustalaşma hedefi' }
     ]
   },
+  // --- 4. Ekran Tutumu ---
   {
-    key: 'physicalIntensity',
-    title: 'Nasıl bir fiziksel aktivite seviyesi arıyorsun?',
-    description: 'Hobin sırasında bedenen ne kadar hareket etmek ve enerji harcamak istersin?',
+    key: 'screenAttitude',
+    modes: ['quick', 'balanced', 'detailed'],
+    title: 'Ekran ve dijital yorgunluk tutumun nedir?',
+    description: 'Gün boyu bilgisayar/telefon başında mısın? Hobinde ekran görmek istiyor musun?',
     options: [
-      { value: 'sedentary', icon: '🪑', title: 'Hareketsiz / Dingin (Masa Başı)', sub: 'Oturarak, zihinsel odak veya ince el becerisi odaklı' },
-      { value: 'light', icon: '🚶', title: 'Hafif & Dengeli Hareket', sub: 'Ayakta durma, mutfak veya hafif yürüyüş temposu' },
-      { value: 'active', icon: '🔥', title: 'Yüksek Tempolu & Terleten Spor', sub: 'Tırmanış, koşu, kardiyo, güç veya çeviklik odaklı' },
-      { value: 'flexible', icon: '✨', title: 'Fark Etmez / Esnek', sub: 'Hem dingin hem hareketli önerilere açığım' }
+      { value: 'no_screen', icon: '📵', title: 'Sıfır Ekran! (Analog & Dokunsal)', sub: 'Gözlerim ve zihnim ekrandan tamamen uzaklaşsın' },
+      { value: 'screen_preferred', icon: '💻', title: 'Ekran Başında Dijital Üretim', sub: 'Bilgisayar, yazılım, kod veya dijital tasarım araçları' },
+      { value: 'flexible', icon: '✨', title: 'Fark Etmez / İkisine de Açığım', sub: 'Ekranlı ya da ekransız önerileri değerlendir' }
     ]
   },
+  // --- 5. Mekan ---
   {
     key: 'location',
+    modes: ['quick', 'balanced', 'detailed'],
     title: 'Bu hobiyi nerede yapmayı hayal ediyorsun?',
     description: 'Evinde alan kısıtın var mı yoksa dışarı çıkmak mı istersin?',
     options: [
@@ -109,8 +173,23 @@ const WIZARD_STEPS = [
       { value: 'specialized_venue', icon: '🧗', title: 'Özel Salon veya Atölyede', sub: 'Ev dışı spor salonu veya stüdyo ortamı' }
     ]
   },
+  // --- 6. Fiziksel Efor ---
+  {
+    key: 'physicalIntensity',
+    modes: ['quick', 'balanced', 'detailed'],
+    title: 'Nasıl bir fiziksel aktivite seviyesi arıyorsun?',
+    description: 'Hobin sırasında bedenen ne kadar hareket etmek ve enerji harcamak istersin?',
+    options: [
+      { value: 'sedentary', icon: '🪑', title: 'Hareketsiz / Dingin (Masa Başı)', sub: 'Oturarak, zihinsel odak veya ince el becerisi odaklı' },
+      { value: 'light', icon: '🚶', title: 'Hafif & Dengeli Hareket', sub: 'Ayakta durma, mutfak veya hafif yürüyüş temposu' },
+      { value: 'active', icon: '🔥', title: 'Yüksek Tempolu & Terleten Spor', sub: 'Tırmanış, koşu, kardiyo, güç veya çeviklik odaklı' },
+      { value: 'flexible', icon: '✨', title: 'Fark Etmez / Esnek', sub: 'Hem dingin hem hareketli önerilere açığım' }
+    ]
+  },
+  // --- 7. Dağınıklık ---
   {
     key: 'messTolerance',
+    modes: ['quick', 'balanced', 'detailed'],
     title: 'Dağınıklık ve temizlik toleransın nedir?',
     description: 'Hobiyi yarım bırakmanın en yaygın sebeplerinden biri temizlik yüküdür.',
     options: [
@@ -119,8 +198,10 @@ const WIZARD_STEPS = [
       { value: 'heavy', icon: '🎨', title: 'Dağınıklık Önemli Değil', sub: 'Kil, boya, su... Sanat biraz kirlenmektir' }
     ]
   },
+  // --- 8. Ses Düzeyi ---
   {
     key: 'noiseTolerance',
+    modes: ['quick', 'balanced', 'detailed'],
     title: 'Çalışma ortamında ses ve gürültü düzeyi nasıl olmalı?',
     description: 'Gece saatlerinde veya ses geçiren apartman dairelerinde kritik bir faktör.',
     options: [
@@ -129,16 +210,173 @@ const WIZARD_STEPS = [
       { value: 'any', icon: '🔊', title: 'Fark Etmez', sub: 'Ses izolasyonum var veya dışarıda yapacağım' }
     ]
   },
+  // --- 9. Seans Başı Süre ---
+  {
+    key: 'sessionLength',
+    modes: ['balanced', 'detailed'],
+    title: 'Tek bir oturuşta / seansta nasıl bir zaman dilimi istersin?',
+    description: 'Bazı hobiler 15 dakikada tamamlanırken, bazıları 2 saat kesintisiz akış ister.',
+    options: [
+      { value: 'micro', icon: '⏱️', title: '15 - 30 Dakikalık Hızlı Mikro Seanslar', sub: 'İstediğimde anında başlayıp bırakabileyim' },
+      { value: 'deep', icon: '⏳', title: '1 - 2+ Saatlik Derinleşme Seansları', sub: 'Dünyayı unutup içine dalacağım uzun ve kesintisiz akış' },
+      { value: 'any', icon: '✨', title: 'Fark Etmez / Duruma Göre Değişir', sub: 'Hem kısa molalara hem uzun seanslara açığım' }
+    ]
+  },
+  // --- 10. İlk Ödül Hızı ---
   {
     key: 'firstWinSpeed',
+    modes: ['balanced', 'detailed'],
     title: 'İlk başarı ve tatmin hissini ne kadar çabuk almak istersin?',
     description: 'İlk somut çıktıyı alma süresi motivasyonu doğrudan belirler.',
     options: [
       { value: 'immediate', icon: '🎯', title: 'İlk Günden Somut Çıktı!', sub: 'Hemen ilk 30 dakikada elime bir ürün veya galibiyet geçsin' },
       { value: 'patient', icon: '🧘', title: 'Sürece Sabırlıyım', sub: '1-2 hafta öğrenme eğrisine zevkle katlanabilirim' }
     ]
+  },
+  // --- 11. Aylık Sarf Gideri ---
+  {
+    key: 'monthlyBudget',
+    modes: ['balanced', 'detailed'],
+    title: 'Başladıktan sonra aylık ne kadar sarf/üyelik gideri kabul edersin?',
+    description: 'Gizli maliyet yanılgısı: birçok hobi ucuz başlar ama malzemeyle pahalılaşır.',
+    options: [
+      { value: 'none', icon: '🚫', title: 'Hiç Sürekli Gider İstemiyorum', sub: 'Bir kez alıp yıllarca kullanabileceğim şeyler' },
+      { value: 'up_to_200', icon: '🪙', title: 'Aylık 200 TL\'ye Kadar', sub: 'Ara sıra sarf malzemesi yenileme' },
+      { value: 'up_to_500', icon: '💳', title: 'Aylık 500 TL\'ye Kadar', sub: 'Düzenli malzeme veya salon üyeliği' },
+      { value: 'any', icon: '✨', title: 'Fark Etmez', sub: 'Aylık gider belirleyici değil' }
+    ]
+  },
+  // --- 12. Saklama Alanı ---
+  {
+    key: 'storageFootprint',
+    modes: ['balanced', 'detailed'],
+    title: 'Evinde hobi ekipmanı için ne kadar yer ayırabilirsin?',
+    description: 'Büyük aletler ve malzemeler dağınıklık yaratıp hevesinizi kırabilir.',
+    options: [
+      { value: 'pocket', icon: '🎒', title: 'Tek Çekmece veya Bir Çanta (Minimal)', sub: 'Sıfır yer kaplasın; masam ve dolabım ferah kalsın' },
+      { value: 'box', icon: '📦', title: 'Orta Boy Bir Kutu / Raf Yeterli', sub: 'Dolapta veya masada ufak bir köşe ayırabilirim' },
+      { value: 'dedicated', icon: '🏠', title: 'Geniş Alan / Özel Köşe Sorun Değil', sub: 'Şövale, alet çantası, ekipman alanı veya özel tezgah' }
+    ]
+  },
+  // --- 13. Zihinsel Mod & Amaç ---
+  {
+    key: 'mentalState',
+    modes: ['balanced', 'detailed'],
+    title: 'Günün yorgunluğu ardından bu hobi sana ne hissettirmeli?',
+    description: 'Temel psikolojik ihtiyacın: kafa dinlemek mi, zihni zorlamak mı, yaratmak mı?',
+    options: [
+      { value: 'zen', icon: '🧘', title: 'Zihni Boşaltma & Dinginlik', sub: 'Meditatif sakinlik, sakin ritim ve düşüncelerden arınma' },
+      { value: 'challenge', icon: '🧠', title: 'Problem Çözme & Meydan Okuma', sub: 'Strateji, mantık, zeka, taktik veya bulmaca çözümü' },
+      { value: 'creative_spark', icon: '🎨', title: 'Yaratıcı Kıvılcım & Estetik İfade', sub: 'Renkler, formlar, özgün sanat ve üretim sevinci' }
+    ]
+  },
+  // --- 14. Sosyal Tarz ---
+  {
+    key: 'socialStyle',
+    modes: ['balanced', 'detailed'],
+    title: 'Hobini tek başına mı, başkalarıyla mı yapmayı tercih edersin?',
+    description: 'Sosyal enerji ihtiyacı, bir hobiyi sürdürme olasılığını ciddi ölçüde etkiler.',
+    options: [
+      { value: 'solo', icon: '🎧', title: 'Tek Başıma, Kendi Ritmimde', sub: 'Kafa dinlemek ve kendi temposunda ilerlemek' },
+      { value: 'social', icon: '🤝', title: 'Topluluk / Arkadaşlarla', sub: 'Kulüp, rakip, partner veya grup etkinlikleri' },
+      { value: 'any', icon: '✨', title: 'Fark Etmez', sub: 'Her iki tür de olur' }
+    ]
+  },
+  // --- 15. Taşınabilirlik ---
+  {
+    key: 'portability',
+    modes: ['detailed'],
+    title: 'Hobini yanında taşımak, seyahatte veya kafede yapmak ister misin?',
+    description: 'Yolculukta, parkta veya kafede devam edebilen mobil hobiler serbestlik sağlar.',
+    options: [
+      { value: 'portable', icon: '👜', title: 'Taşınabilir Olmalı', sub: 'Çantamda her yere gitsin; parkta, kafede, seyahatte yapabileyim' },
+      { value: 'fixed', icon: '🛋️', title: 'Sabit Evimde / Odamda Olsun', sub: 'Masa veya tezgah başında yapılması yeterli, taşımaya gerek yok' },
+      { value: 'any', icon: '✨', title: 'Fark Etmez', sub: 'Mekan bağımsızlığı önceliğim değil' }
+    ]
+  },
+  // --- 16. Çıktı Biçimi ---
+  {
+    key: 'outputType',
+    modes: ['detailed'],
+    title: 'Uğraşının sonucunda elinde ne kalmasını hayal ediyorsun?',
+    description: 'Bazıları dokunabileceği somut bir obje ister, bazıları yeni bir zihinsel ustalık.',
+    options: [
+      { value: 'physical_object', icon: '🏺', title: 'Somut Fiziksel Bir Eser', sub: 'Fincan, ekmek, takı, örgü, ahşap obje veya tablo' },
+      { value: 'digital_skill', icon: '💾', title: 'Dijital Varlık veya Yeni Beceri', sub: 'Kod, 3D model, müzik, satranç veya hafıza ustalığı' },
+      { value: 'experience_curation', icon: '☕', title: 'Deneyim, Lezzet & Koleksiyon', sub: 'Tadım notları, doğa keşfi, fotoğraf, seçki ve anılar' },
+      { value: 'any', icon: '✨', title: 'Hepsi Olabilir / Fark Etmez', sub: 'Çıktı türü önemsiz, süreç keyif versin' }
+    ]
+  },
+  // --- 17. Kuralcılık ve Hassasiyet ---
+  {
+    key: 'structureStyle',
+    modes: ['detailed'],
+    title: 'Hangi çalışma tarzı seni daha az strese sokar?',
+    description: 'Kimi milimetrik kural ve disiplini sever, kimi serbest doğaçlamayı.',
+    options: [
+      { value: 'forgiving', icon: '🌿', title: 'Hata Kaldıran & Serbest Akış', sub: 'Milimetrik kural yok, doğaçlama, esnek ve rahatlatıcı' },
+      { value: 'precise', icon: '📐', title: 'Hassas, Titiz & Kuralcı', sub: 'Milimetrik ölçüm, teknik kurallar, mantık ve disiplin' },
+      { value: 'any', icon: '✨', title: 'Fark Etmez', sub: 'İki çalışma tarzı da bana uyar' }
+    ]
+  },
+  // --- 18. Duyusal Çekim ---
+  {
+    key: 'sensoryPreference',
+    modes: ['detailed'],
+    title: 'En çok hangi duyunun uyarılmasından keyif alırsın?',
+    description: 'Hobi sırasında seni en çok büyüleyen duyusal his hangisi?',
+    options: [
+      { value: 'tactile', icon: '🖐️', title: 'Dokunsal & El Emeği', sub: 'Kil, ahşap, yün, ip, kağıt, metal, kumaş dokusu' },
+      { value: 'gustatory', icon: '☕', title: 'Tat & Koku Duyusu', sub: 'Kahve, ekmek, çay, fermantasyon, aromaterapi ve lezzet' },
+      { value: 'visual', icon: '👁️', title: 'Görsel & Tasarımsal', sub: 'Renkler, ışık, tipografi, desenler ve kompozisyon' },
+      { value: 'intellectual', icon: '💡', title: 'Soyut Mantık & Zeka', sub: 'Rakamlar, algoritmalar, semboller ve hamleler' },
+      { value: 'any', icon: '✨', title: 'Fark Etmez', sub: 'Tüm duyusal uyaranlara açığım' }
+    ]
+  },
+  // --- 19. İlerleme Ritmi ---
+  {
+    key: 'pacingStyle',
+    modes: ['detailed'],
+    title: 'Hobiyi sürdürürken nasıl bir öğrenme süreci seversin?',
+    description: 'Ritmik tekrarlar mı zihnini dinlendirir yoksa sürekli yeni dinamikler mi?',
+    options: [
+      { value: 'repetitive_flow', icon: '🔄', title: 'Ritmik & Tekrara Dayalı Akış', sub: 'Benzer hareketlerle zihnin hipnotik biçimde dinlenmesi' },
+      { value: 'dynamic_variety', icon: '🎲', title: 'Sürekli Yeni Taktik & Değişkenlik', sub: 'Her seansta bambaşka bir senaryo, problem veya mekan' },
+      { value: 'any', icon: '✨', title: 'Fark Etmez', sub: 'Her iki öğrenme biçimi de olur' }
+    ]
+  },
+  // --- 20. Pazarlıksız Kırmızı Çizgi / Öncelik ---
+  {
+    key: 'priority',
+    modes: ['detailed'],
+    title: 'Senin için pazarlık konusu OLMAYAN kırmızı çizgi kriter hangisi?',
+    description: 'Seçtiğin kriter puanlamada 2.4 kat ekstra ağırlık kazanır ve zıtlıklar çok daha sert elenir.',
+    options: [
+      { value: 'interest', icon: '💡', title: 'İlgi Alanım', sub: 'Ne yaptığım her şeyden önemli' },
+      { value: 'budget', icon: '💰', title: 'Bütçe', sub: 'Başlangıç ve aylık maliyet sınırımı kesinlikle aşmamalı' },
+      { value: 'no_screen', icon: '📵', title: 'Sıfır Ekran', sub: 'Kesinlikle ekrandan uzak, fiziksel/analog olmalı' },
+      { value: 'time', icon: '⏱️', title: 'Zaman & Pratiklik', sub: 'Ayırabildiğim saate ve hazırlık yüküne tam sığmalı' },
+      { value: 'location', icon: '📍', title: 'Mekan', sub: 'Seçtiğim ortamda yapılabilmeli' },
+      { value: 'physical', icon: '🔥', title: 'Fiziksel Efor', sub: 'Hareket seviyesi beklentime birebir uymalı' },
+      { value: 'calm', icon: '🤫', title: 'Sessizlik & Temizlik', sub: 'Evde gürültü ve leke yaratmamalı' },
+      { value: 'portability', icon: '👜', title: 'Taşınabilirlik', sub: 'Çantamda yanımda gezdirebilmeliyim' },
+      { value: 'firstWin', icon: '🎯', title: 'Hızlı Tatmin', sub: 'İlk günden somut sonuç görmeliyim' }
+    ]
   }
 ];
+
+function getActiveSteps() {
+  return ALL_WIZARD_STEPS.filter(s => s.modes.includes(selectedTestMode));
+}
+
+// Puanlama motoruna yalnızca seçilen testte sorulan cevaplar gönderilir
+function getActivePreferences() {
+  const prefs = {};
+  getActiveSteps().forEach(s => {
+    prefs[s.key] = userAnswers[s.key];
+  });
+  return prefs;
+}
 
 // Elements
 const wizardModal = document.getElementById('wizard-modal');
@@ -186,7 +424,7 @@ let activeHobbyForModal = null;
 // WIZARD LOGIC
 // ============================================================================
 function openWizard() {
-  currentStep = 0;
+  currentStep = -1;
   wizardModal.classList.remove('hidden');
   renderWizardStep();
 }
@@ -195,14 +433,64 @@ function closeWizard() {
   wizardModal.classList.add('hidden');
 }
 
+function renderSharpnessMeter(level) {
+  return `<span class="sharpness-meter" aria-label="Keskinlik ${level}/3">${[1, 2, 3]
+    .map(i => `<span class="sharpness-bar ${i <= level ? 'filled' : ''}"></span>`)
+    .join('')}</span>`;
+}
+
+function renderModeSelection() {
+  wizardStepLabel.textContent = 'Test Türünü Seç';
+  wizardProgressBar.style.width = '0%';
+  wizardPrevBtn.disabled = true;
+  wizardNextBtn.textContent = 'Teste Başla →';
+
+  const cards = MODE_KEYS.map(key => {
+    const m = TEST_MODES[key];
+    const qCount = ALL_WIZARD_STEPS.filter(s => s.modes.includes(key)).length;
+    return `
+      <button type="button" class="test-mode-card ${selectedTestMode === key ? 'selected' : ''}" id="test-mode-${key}" data-mode="${key}">
+        <span class="test-mode-icon">${m.icon}</span>
+        <span class="test-mode-title">${m.title}</span>
+        <span class="test-mode-meta">${qCount} soru • ${m.duration}</span>
+        <span class="test-mode-desc">${m.desc}</span>
+        <span class="test-mode-sharpness">Keskinlik ${renderSharpnessMeter(m.sharpness)}</span>
+      </button>
+    `;
+  }).join('');
+
+  wizardStepContent.innerHTML = `
+    <h3 class="wizard-question-title">Nasıl bir test istersin?</h3>
+    <p class="wizard-question-desc">Soru sayısı arttıkça puanlama daha katı kalibre edilir: daha az ama daha isabetli hobi yüksek uyum alır.</p>
+    <div class="test-mode-grid">${cards}</div>
+  `;
+
+  const cardEls = wizardStepContent.querySelectorAll('.test-mode-card');
+  cardEls.forEach(el => {
+    el.addEventListener('click', () => {
+      cardEls.forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedTestMode = el.getAttribute('data-mode');
+    });
+    el.addEventListener('dblclick', handleWizardNext);
+  });
+}
+
 function renderWizardStep() {
-  const step = WIZARD_STEPS[currentStep];
-  wizardStepLabel.textContent = `Adım ${currentStep + 1} / ${WIZARD_STEPS.length}`;
-  const progressPercent = ((currentStep + 1) / WIZARD_STEPS.length) * 100;
+  if (currentStep < 0) {
+    renderModeSelection();
+    return;
+  }
+
+  const steps = getActiveSteps();
+  const step = steps[currentStep];
+  const mode = TEST_MODES[selectedTestMode];
+  wizardStepLabel.textContent = `${mode.icon} ${mode.title} • Adım ${currentStep + 1} / ${steps.length}`;
+  const progressPercent = ((currentStep + 1) / steps.length) * 100;
   wizardProgressBar.style.width = `${progressPercent}%`;
 
-  wizardPrevBtn.disabled = currentStep === 0;
-  wizardNextBtn.textContent = (currentStep === WIZARD_STEPS.length - 1) ? '🎯 Sonuçları Gör' : 'Devam Et →';
+  wizardPrevBtn.disabled = false;
+  wizardNextBtn.textContent = (currentStep === steps.length - 1) ? '🎯 Sonuçları Gör' : 'Devam Et →';
 
   let html = `
     <h3 class="wizard-question-title">${step.title}</h3>
@@ -238,7 +526,8 @@ function renderWizardStep() {
 }
 
 function handleWizardNext() {
-  if (currentStep < WIZARD_STEPS.length - 1) {
+  const steps = getActiveSteps();
+  if (currentStep < steps.length - 1) {
     currentStep++;
     renderWizardStep();
   } else {
@@ -248,16 +537,19 @@ function handleWizardNext() {
 }
 
 function handleWizardPrev() {
-  if (currentStep > 0) {
+  if (currentStep >= 0) {
     currentStep--;
     renderWizardStep();
   }
 }
 
 function finishWizardAndShowResults(isSilentRestore = false) {
-  allScoredHobbies = calculateHobbyScores(HOBBIES, userAnswers);
-
   const savedQuiz = getStorage(STORAGE_KEYS.QUIZ_STATE, {});
+  if (isSilentRestore && savedQuiz.mode && MODE_KEYS.includes(savedQuiz.mode)) {
+    selectedTestMode = savedQuiz.mode;
+  }
+  allScoredHobbies = calculateHobbyScores(HOBBIES, getActivePreferences(), selectedTestMode);
+
   if (isSilentRestore && savedQuiz.threshold) {
     currentThresholdPercent = Number(savedQuiz.threshold) || 75;
     recActiveCategory = savedQuiz.recActiveCategory || 'all';
@@ -276,6 +568,7 @@ function finishWizardAndShowResults(isSilentRestore = false) {
   setStorage(STORAGE_KEYS.ANSWERS, userAnswers);
   setStorage(STORAGE_KEYS.QUIZ_STATE, {
     completed: true,
+    mode: selectedTestMode,
     threshold: currentThresholdPercent,
     recActiveCategory: recActiveCategory
   });
@@ -318,12 +611,40 @@ function updateThresholdAndFilter(isInitial = false) {
       : `Belirttiğiniz kriterlere göre %${currentThresholdPercent} ve üzeri uyum sağlayan toplam ${topRecommendedHobbies.length} hobi listelenmiştir. Kategorilere göre filtreleyebilirsiniz.`;
   }
 
+  updateRecModeBadge();
   updateRecCategoryFilterPills();
   renderTopMatches();
 
   if (!isInitial) {
     showToast(`%${currentThresholdPercent}+ uyum: ${topRecommendedHobbies.length} hobi listelendi`);
   }
+}
+
+function updateRecModeBadge() {
+  const mode = TEST_MODES[selectedTestMode];
+  const badge = document.getElementById('rec-mode-badge');
+  if (badge) {
+    badge.innerHTML = `${mode.icon} ${mode.title} Sonuçları ${renderSharpnessMeter(mode.sharpness)}`;
+  }
+
+  const upgradeBtn = document.getElementById('btn-upgrade-test');
+  if (upgradeBtn) {
+    const nextMode = MODE_KEYS[MODE_KEYS.indexOf(selectedTestMode) + 1];
+    if (nextMode) {
+      upgradeBtn.style.display = '';
+      upgradeBtn.dataset.mode = nextMode;
+      upgradeBtn.textContent = `${TEST_MODES[nextMode].icon} Daha Keskin Sonuç: ${TEST_MODES[nextMode].title}`;
+    } else {
+      upgradeBtn.style.display = 'none';
+    }
+  }
+}
+
+function startTestInMode(mode) {
+  selectedTestMode = mode;
+  currentStep = 0;
+  wizardModal.classList.remove('hidden');
+  renderWizardStep();
 }
 
 function updateRecCategoryFilterPills() {
@@ -800,6 +1121,22 @@ function initEventListeners() {
   wizardPrevBtn.addEventListener('click', handleWizardPrev);
 
   btnRecalculate.addEventListener('click', openWizard);
+
+  const btnUpgradeTest = document.getElementById('btn-upgrade-test');
+  if (btnUpgradeTest) {
+    btnUpgradeTest.addEventListener('click', () => {
+      if (btnUpgradeTest.dataset.mode) startTestInMode(btnUpgradeTest.dataset.mode);
+    });
+  }
+
+  document.querySelectorAll('[data-launch-mode]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.getAttribute('data-launch-mode');
+      if (mode && MODE_KEYS.includes(mode)) {
+        startTestInMode(mode);
+      }
+    });
+  });
 
   closeDetailBtn.addEventListener('click', closeHobbyDetail);
   btnCloseDetailCta.addEventListener('click', closeHobbyDetail);
